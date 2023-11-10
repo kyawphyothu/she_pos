@@ -1,0 +1,11 @@
+// UserRoutes.js
+
+const express = require('express');
+const router = express.Router();
+const OrderController = require("../controllers/OrderController")
+
+router.get('/', OrderController.index);
+router.get('/:id', OrderController.show);
+router.get('/history/:id', OrderController.history);
+
+module.exports = router;

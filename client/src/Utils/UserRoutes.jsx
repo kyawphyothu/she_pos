@@ -3,14 +3,14 @@ import Detail from "../pages/Detail";
 import Home from "../pages/Home";
 import HtetYu from "../pages/HtetYu";
 import PayInterest from "../pages/PayInterest";
-import Reextract from "../pages/Reextract";
+import Redeem from "../pages/Redeem";
 import Search from "../pages/Search";
 
 const UserRoutes = [
-	{
-		path: "/",
-		element: <Home />,
-	},
+	// {
+	// 	path: "/",
+	// 	element: <Home />,
+	// },
 	{
 		path: "/add",
 		element: <Add />,
@@ -33,7 +33,7 @@ const UserRoutes = [
 	},
 	{
 		path: "/reextract/:id",
-		element: <Reextract />,
+		element: <Redeem />,
 	},
 ];
 

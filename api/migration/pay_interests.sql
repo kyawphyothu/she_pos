@@ -1,0 +1,15 @@
+CREATE TABLE pay_interests (
+  id INT NOT NULL AUTO_INCREMENT,
+  order_id INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  pay_price INT NOT NULL,
+  left_price INT NOT NULL,
+  pay_date DATETIME NOT NULL,
+  change_date DATETIME NULL,
+  description LONGTEXT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX (order_id),
+  FOREIGN KEY (order_id) REFERENCES orders(id)
+);

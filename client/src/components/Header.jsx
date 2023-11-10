@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -20,6 +21,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { Container, Grid, Menu, MenuItem, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
+import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
+import { AppContext } from '../AppContextProvider';
 
 const StyledFab = styled(Fab)({
 	position: 'absolute',
@@ -31,10 +35,12 @@ const StyledFab = styled(Fab)({
 });
 
 export default function Header() {
+	const { auth, setAuth, setAuthUser } = useContext(AppContext);
+
 	const navigate = useNavigate();
 	const APP_NAME = import.meta.env.VITE_APP_NAME;
 
-	const [anchorElUser, setAnchorElUser] = React.useState(null);
+	const [anchorElUser, setAnchorElUser] = useState(null);
 
 	const handleOpenUserMenu = (event) => {
 		setAnchorElUser(event.currentTarget);
@@ -42,6 +48,27 @@ export default function Header() {
 	const handleCloseUserMenu = () => {
 		setAnchorElUser(null);
 	};
+
+	const profileMenuList = [
+		{
+			name: "Login",
+			path: "/login",
+			icon: <LoginRoundedIcon sx={{ mr: 1 }} />,
+			auth: false,
+		},
+		{
+			name: "Signup",
+			path: "/signup",
+			icon: <ExitToAppRoundedIcon sx={{ mr: 1 }} />,
+			auth: false,
+		},
+		{
+			name: "Logout",
+			path: "/",
+			icon: <LoginRoundedIcon sx={{ mr: 1 }} />,
+			auth: true,
+		},
+	]
 
 	return (
 		<React.Fragment>
@@ -74,16 +101,68 @@ export default function Header() {
 								}}
 								open={Boolean(anchorElUser)}
 								onClose={handleCloseUserMenu}>
-								<MenuItem
-									onClick={() => {
-										handleCloseUserMenu();
-										navigate("/profile");
-									}}>
-									<Typography sx={{ display: "flex", justifyContent: "center" }}>
-										{/* <AccountCircleRoundedIcon sx={{ mr: 1 }} /> */}
-										Profile
-									</Typography>
-								</MenuItem>
+								{/* {
+									profileMenuList.filter((i) => i.auth === auth).map((p) => {
+										return (
+											<MenuItem
+												key={p.path}
+												onClick={() => {
+													handleCloseUserMenu();
+													navigate(p.path);
+												}}>
+												<Typography sx={{ display: "flex", justifyContent: "center" }}>
+													{p.icon}
+													{p.name}
+												</Typography>
+											</MenuItem>
+										)
+									})
+								} */}
+								{
+									auth ? (
+										[
+											<MenuItem
+												key={1}
+												onClick={() => {
+													handleCloseUserMenu();
+													localStorage.removeItem("token");
+													setAuth(false);
+													setAuthUser({});
+													navigate("/");
+												}}>
+												<Typography sx={{ display: "flex", justifyContent: "center" }}>
+													<LoginRoundedIcon sx={{ mr: 1 }} />
+													Logout
+												</Typography>
+											</MenuItem>
+										]
+									) : (
+										[
+											<MenuItem
+												key={2}
+												onClick={() => {
+													handleCloseUserMenu();
+													navigate("/login");
+												}}>
+												<Typography sx={{ display: "flex", justifyContent: "center" }}>
+													<LoginRoundedIcon sx={{ mr: 1 }} />
+													Login
+												</Typography>
+											</MenuItem>,
+											<MenuItem
+												key={3}
+												onClick={() => {
+													handleCloseUserMenu();
+													navigate("/signup");
+												}}>
+												<Typography sx={{ display: "flex", justifyContent: "center" }}>
+													<ExitToAppRoundedIcon sx={{ mr: 1 }} />
+													Signup
+												</Typography>
+											</MenuItem>
+										]
+									)
+								}
 							</Menu>
 						</Box>
 					</Toolbar>

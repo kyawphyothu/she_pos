@@ -1,0 +1,17 @@
+CREATE TABLE half_redeems (
+  id INT NOT NULL AUTO_INCREMENT,
+  order_id INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  take_gold VARCHAR(255) NOT NULL,
+  left_gold VARCHAR(255) NOT NULL,
+  weight INT NOT NULL,
+  pay_price INT NOT NULL,
+  left_price INT NOT NULL,
+  date DATETIME NOT NULL,
+  description VARCHAR(255) NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX (order_id),
+  FOREIGN KEY (order_id) REFERENCES orders(id)
+);

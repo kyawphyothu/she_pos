@@ -35,46 +35,48 @@ async function makeApiRequest(endpoint, method, body = {}) {
 
 //---------------------------------------------auth------------------------------------------
 // singup
-// export async function signup(user) {
-// 	const res = await fetch(`${apiBase}/auth/signup`, {
-// 		method: "POST",
-// 		headers: {
-// 			"Content-Type": "application/json",
-// 		},
-// 		body: JSON.stringify(user),
-// 	});
+export async function signup(user) {
+	const res = await fetch(`${apiBase}/auth/signup`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(user),
+	});
 
-// 	const result = await res.json();
-// 	if (res.ok) {
-// 		localStorage.setItem(apiTokenName, result.token);
-// 		result.ok = true;
-// 	} else {
-// 		result.ok = false;
-// 	}
+	const result = await res.json();
+	if (res.ok) {
+		localStorage.setItem(apiTokenName, result.token);
+		result.ok = true;
+	} else {
+		result.ok = false;
+	}
 
-// 	return result;
-// }
+	return result;
+}
 
 // login
-export async function login(handle, password) {
-	if (!handle || !password) return false;
-
+export async function login(data) {
 	const res = await fetch(`${apiBase}/auth/login`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ handle, password }),
+		body: JSON.stringify(data),
 	});
 
 	if (res.ok) {
 		const result = await res.json();
+		result.ok = true;
 		localStorage.setItem(apiTokenName, result.token);
 
 		return result;
-	}
+	} else {
+		const result = await res.json();
+		result.ok = false;
 
-	return false;
+		return result;
+	}
 }
 
 // logout
@@ -109,9 +111,9 @@ export async function checkPass(password) {
 // get user by token
 export async function fetchUser() {
 	const token = getToken();
-	if (!token) return { msg: "unauthorized" };
+	if (!token) return { err: "unauthorized", ok: false };
 
-	const res = await fetch(`${apiBase}/auth/user`, {
+	const res = await fetch(`${apiBase}/user/getLoginUser`, {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
@@ -119,8 +121,58 @@ export async function fetchUser() {
 
 	if (res.ok) {
 		const result = await res.json();
+		result.ok = true;
 		return result;
 	}
 
 	return false;
+}
+
+//------------------------------------------acceptors------------------------------
+export async function getAllAcceptors() {
+	return makeApiRequest("/acceptor", "GET");
+}
+
+
+//------------------------------------------villages------------------------------
+export async function getAllvillages() {
+	return makeApiRequest("/village", "GET");
+}
+
+//------------------------------------------pawn------------------------------
+export async function createPawn(data) {
+	return makeApiRequest("/pawn", "POST", {data});
+}
+
+
+//------------------------------------------orders------------------------------
+export async function searchOrder(nameOrCode) {
+	return makeApiRequest(`/order?q=${nameOrCode}`, "GET");
+}
+export async function getOrderById(id) {
+	return makeApiRequest(`/order/${id}`, "GET");
+}
+export async function getHistoryByOrderId(id) {		// history
+	return makeApiRequest(`/order/history/${id}`, "GET");
+}
+
+
+//------------------------------------------htet_yu------------------------------
+export async function createHtetYu(data) {
+	return makeApiRequest(`/htet_yu`, "POST", {data});
+}
+
+
+//------------------------------------------pay_interest------------------------------
+export async function createPayInterest(data) {
+	return makeApiRequest(`/pay_interest`, "POST", {data});
+}
+
+//------------------------------------------half_redeem------------------------------
+export async function createHalfRedeem(data) {
+	return makeApiRequest(`/half_redeem`, "POST", {data});
+}
+//------------------------------------------redeem------------------------------
+export async function createRedeem(data) {
+	return makeApiRequest(`/redeem`, "POST", {data});
 }

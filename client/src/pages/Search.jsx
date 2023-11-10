@@ -1,21 +1,26 @@
 import { Autocomplete, Box, Button, Divider, Grid, Stack, TextField, Typography } from '@mui/material'
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useRef, useState } from 'react'
+import { unstable_HistoryRouter, useNavigate, useSearchParams } from 'react-router-dom'
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import GetMMDate from '../helper/GetMMDate';
 import NumChangeEngToMM from '../helper/NumChangeEngToMM';
 import { green, grey } from '@mui/material/colors';
 import CustomBadge from '../components/CustomBudge';
 import CustomDialog from '../components/CustomDialog';
-import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
+import CustomDateInput from '../components/CustomDateInput';
+import { getAllvillages, searchOrder } from '../apiCalls';
+import { LoadingButton } from '@mui/lab';
+import CalculateWeight from '../helper/CalculateWeight';
 
 export default function Search() {
-	const [openFilterDialog, setOpenFilterDialog] = useState(false);
-	const [villages, setVillages] = useState([{id: 1, name: "စလေ"}, {id: 2, name: "မြို့မ"}, {id: 2, name: "ကျော်ဖြိုးသူ"}]);
-
 	const navigate = useNavigate();
+	const [searchParams, setSearchParams] = useSearchParams()
+
+	const [openFilterDialog, setOpenFilterDialog] = useState(false);
+	const [villages, setVillages] = useState([]);
+	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
+	const [orders, setOrders] = useState([]);
+	const [searchText, setSearchText] = useState(searchParams.get("q"));
 
 	const handleCloseFilterDialog = () => {
 		setOpenFilterDialog(false);
@@ -44,12 +49,43 @@ export default function Search() {
 		};
 	});
 
+	const handleSearch = async () => {
+		const nameOrCode = searchText;
+		if(!nameOrCode) return;
+		setIsLoadingBtn(true);
+
+		localStorage.setItem("q", nameOrCode);
+
+		const res = await searchOrder(nameOrCode);
+		setIsLoadingBtn(false);
+		if(res.ok){
+			setOrders(res);
+		}
+	}
+
+	useEffect(() => {
+		const fetchVillages = async () => {
+			const result = await getAllvillages();
+			if(!result.ok) return;
+			setVillages(result);
+		}
+
+		fetchVillages();
+		handleSearch();
+	}, [])
+
+	useEffect(() => {
+		handleSearch();
+	}, [searchParams])
+
 	return (
 		<>
 			<Stack direction={"row"} spacing={1} sx={{ display: "flex", mb: 1 }}>
 				<TextField
 					label="အမည် (သို့) code"
 					size='small'
+					defaultValue={searchText}
+					onChange={(e) => setSearchText(e.target.value)}
 					sx={{
 						flexGrow: 1,
 					}}
@@ -62,40 +98,43 @@ export default function Search() {
 					<TuneRoundedIcon />
 				</Button>
 			</Stack>
-			<Button variant='contained' fullWidth>search</Button>
+			<LoadingButton loading={isLoadingBtn} variant='contained' fullWidth onClick={() => setSearchParams({q: searchText})}>search</LoadingButton>
 
 			{/* search result */}
 			<Grid container spacing={3} mt={2}>
-				<Grid item xs={12}>
-					<Stack
-						sx={{ cursor: "pointer" }}
-						onClick={() => navigate("/detail/1")}>
-						<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem", textDecoration: "underline" }}>အောင်အောင်မင်း</Typography>
-						<Typography variant='subtitle1'>မင်းဂံရွာ</Typography>
-						<Typography variant='subtitle1'>နားကပ် ဆွဲကြိုးအပြာ နားဆွဲ</Typography>
-						<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(123000, true)} ကျပ်တိတိ</Typography>
-						<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date())}</Typography>
-						<span>
-							<CustomBadge>စန်းစန်းထွေး</CustomBadge>
-							<CustomBadge color='error'>ရွေးပြီး</CustomBadge>
-						</span>
-					</Stack>
-				</Grid>
-				<Grid item xs={12}>
-					<Stack
-						sx={{ cursor: "pointer" }}
-						onClick={() => console.log("helo")}>
-						<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem", textDecoration: "underline" }}>အောင်အောင်မင်း</Typography>
-						<Typography variant='subtitle1'>မင်းဂံရွာ</Typography>
-						<Typography variant='subtitle1'>နားကပ် ဆွဲကြိုးအပြာ နားဆွဲ</Typography>
-						<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(123000, true)} ကျပ်တိတိ</Typography>
-						<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date())}</Typography>
-						<span>
-							<CustomBadge>စန်းစန်းထွေး</CustomBadge>
-							<CustomBadge color='error'>ရွေးပြီး</CustomBadge>
-						</span>
-					</Stack>
-				</Grid>
+				{
+					orders.length ? (
+						orders.map((order) => {
+							return (
+								<Grid item xs={12} key={order.id}>
+									<Stack
+										sx={{ cursor: "pointer" }}
+										onClick={() => navigate(`/detail/${order.id}`)}>
+										<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem", textDecoration: "underline" }}>{order.name}</Typography>
+										<Typography variant='subtitle1'>{order.village}</Typography>
+										<Typography variant='subtitle1'>{order.gold}</Typography>
+										<Typography variant='subtitle1'>{CalculateWeight(order.weight)}</Typography>
+										<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(order.price || 0, true)} ကျပ်တိတိ</Typography>
+										<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(order.date))}</Typography>
+										<span>
+											<CustomBadge>{order.acceptor}</CustomBadge>
+											{
+												Boolean(order.redeem) && (
+													<CustomBadge color='error'>ရွေးပြီး</CustomBadge>
+												)
+											}
+										</span>
+									</Stack>
+								</Grid>
+							)
+						})
+					):(
+						!isLoadingBtn &&
+						<Grid item xs={12}>
+							<Typography variant='subtitle1' color={grey[500]}>ရလဒ်မရှိပါ</Typography>
+						</Grid>
+					)
+				}
 			</Grid>
 
 			{/* filter dialog */}
@@ -117,36 +156,16 @@ export default function Search() {
 						/>
 					</Grid>
 					<Grid item xs={6}>
-						<LocalizationProvider dateAdapter={AdapterDayjs}>
-							<MobileDatePicker
-								label="မှ"
-								defaultValue={dayjs(new Date())}
-								helper
-								slotProps={{
-									textField: {
-										size: 'small',
-										fullWidth: true,
-										helperText: "text"
-									}
-								}}
-							/>
-						</LocalizationProvider>
+						<CustomDateInput
+							label="မှ"
+							defaultValue={new Date()}
+						/>
 					</Grid>
 					<Grid item xs={6}>
-						<LocalizationProvider dateAdapter={AdapterDayjs}>
-							<MobileDatePicker
-								label="ထိ"
-								defaultValue={dayjs(new Date())}
-								helper
-								slotProps={{
-									textField: {
-										size: 'small',
-										fullWidth: true,
-										helperText: "text"
-									}
-								}}
-							/>
-						</LocalizationProvider>
+						<CustomDateInput
+							label="ထိ"
+							defaultValue={new Date()}
+						/>
 					</Grid>
 					<Grid item xs={6}>
 						<TextField

@@ -19,26 +19,31 @@ const Login = () => {
 	const { setAuth, setAuthUser, snackNoti } = useContext(AppContext);
 	const navigate = useNavigate();
 
+	const [formData, setFormData] = useState({username: "", password: ""});
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 
-	const handleRef = useRef();
-	const passwordRef = useRef();
+	const handleChangeInput = (e) => {
+		setFormData(prev => (
+			{
+				...prev,
+				[e.target.name]: e.target.value
+			}
+		))
+	}
 
 	const handleLogin = () => {
 		(async () => {
 			setIsLoadingBtn(true);
 
-			const handle = handleRef.current.value;
-			const password = passwordRef.current.value;
-			if (!handle || !password) {
-				snackNoti({ type: "error", msg: "Require Username & Password" });
+			if (!formData.username || !formData.password) {
+				snackNoti({ type: "error", msg: "အချက်အလက်များမပြည့်စုံပါ" });
 				setIsLoadingBtn(false);
 				return false;
 			}
-			const result = await login(handle, password);
+			const result = await login(formData);
 			setIsLoadingBtn(false);
-			if (!result) {
-				snackNoti({ type: "error", msg: "Incorrect Username Or Password" });
+			if (!result.ok) {
+				snackNoti({ type: "error", msg: result.err });
 				return false;
 			}
 			setAuthUser(result.user);
@@ -53,7 +58,7 @@ const Login = () => {
 			sx={{
 				display: "flex",
 				alignItems: "center",
-				minHeight: "calc(100vh - 100px)",
+				minHeight: "calc(100vh - 200px)",
 				justifyContent: "center",
 				color: "#cccccc",
 				paddingY: "24px",
@@ -66,7 +71,7 @@ const Login = () => {
 					justifyContent: "center",
 					alignItems: "center",
 				}}>
-				<Typography variant="h4" sx={{ fontWeight: "bold" }}>
+				<Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
 					{import.meta.env.VITE_APP_NAME}
 				</Typography>
 				<form
@@ -90,20 +95,20 @@ const Login = () => {
 							</Grid>
 							<Grid item xs={12}>
 								<TextField
+									name="username"
 									label="Username"
 									type="text"
-									required
 									fullWidth
-									inputRef={handleRef}
+									onChange={handleChangeInput}
 								/>
 							</Grid>
 							<Grid item xs={12}>
 								<TextField
+									name="password"
 									label="Password"
 									type="password"
-									required
 									fullWidth
-									inputRef={passwordRef}
+									onChange={handleChangeInput}
 								/>
 							</Grid>
 							<Grid item xs={12}>
@@ -123,19 +128,19 @@ const Login = () => {
 									<span>Login</span>
 								</LoadingButton>
 							</Grid>
-							<Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+							{/* <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
 								<Typography>Forgot Password</Typography>
-							</Grid>
+							</Grid> */}
 						</Grid>
 					</div>
 				</form>
-				<Typography>Do not have an account?</Typography>
+				{/* <Typography>Do not have an account?</Typography>
 				<Typography
 					component="span"
 					onClick={() => navigate("/signup")}
 					sx={{ textDecoration: "underline", fontWeight: "bold", cursor: "pointer" }}>
 					Create account
-				</Typography>
+				</Typography> */}
 			</Box>
 		</Box>
 	);
