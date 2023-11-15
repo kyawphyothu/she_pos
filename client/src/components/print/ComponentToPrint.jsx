@@ -20,6 +20,11 @@ const ComponentToPrint = forwardRef((props, ref) => {
 			</div>
 
 			<Stack>
+				<Typography variant='subtitle1'>subtitle1</Typography>
+				<Typography variant='subtitle2'>subtitle2</Typography>
+				<Typography variant='body1'>body1</Typography>
+				<Typography variant='body2'>body2</Typography>
+				<Typography variant='caption'>caption</Typography>
 				<Typography variant='subtitle1' sx={{ fontWeight: "600" }}>{order.name}</Typography>
 				<Typography variant='subtitle1'>{FormatCode(order.code)}</Typography>
 				<Typography variant='subtitle1'>{order.village}</Typography>
@@ -53,7 +58,8 @@ const styles = {
 	main: {
 		fontSize: "12px",
 		backgroundColor: "#fff",
-		color: "#000"
+		color: "#000",
+		fontWeight: "lighter"
 	}
 }
 
