@@ -5,6 +5,7 @@ import HtetYu from "../pages/HtetYu";
 import PayInterest from "../pages/PayInterest";
 import Redeem from "../pages/Redeem";
 import Search from "../pages/Search";
+import TableBorrow from "../pages/TableBorrow";
 
 const UserRoutes = [
 	// {
@@ -34,6 +35,10 @@ const UserRoutes = [
 	{
 		path: "/reextract/:id",
 		element: <Redeem />,
+	},
+	{
+		path: "/table_borrow",
+		element: <TableBorrow />,
 	},
 ];
 

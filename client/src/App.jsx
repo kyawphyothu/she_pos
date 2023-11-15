@@ -41,7 +41,8 @@ export default function App() {
 							element={r.element}
 						/>
 					})}
-					<Route path='/' element={<Home />} />
+					<Route path="/" element={<Home />} />
+					<Route path="/page/:id" element={<Home />} />
 					<Route path='/signup' element={<Signup />} />
 					<Route path='/login' element={<Login />} />
 					<Route path='*' element={<NotFound />} />

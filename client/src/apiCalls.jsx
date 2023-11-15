@@ -149,6 +149,9 @@ export async function createPawn(data) {
 export async function searchOrder(nameOrCode) {
 	return makeApiRequest(`/order?q=${nameOrCode}`, "GET");
 }
+export async function getTodayOrder() {
+	return makeApiRequest(`/order/this_day`, "GET");
+}
 export async function getOrderById(id) {
 	return makeApiRequest(`/order/${id}`, "GET");
 }

@@ -30,11 +30,21 @@ class Order{
 		return result;
 	}
 
-	static async getHistoryByOrderId(order_id){
-		// const params = {
-		// 	orderId: order_id, // Replace this with your actual order_id value
-		// };
+	static async getThisDayOrder(){
+		const query = `SELECT orders.id, orders.name, orders.phone, orders.gold, orders.weight, orders.date, orders.redeem, pawns.price, acceptors.name as acceptor, villages.name as village
+			FROM orders
+			LEFT JOIN pawns ON pawns.order_id=orders.id
+			LEFT JOIN acceptors ON acceptors.id=orders.acceptor_id
+			LEFT JOIN villages ON villages.id=orders.village_id
+			WHERE orders.date = CURDATE()
+			ORDER BY date desc`
+		;
+		const [result, fileds] = await db.query(query)
 
+		return result;
+	}
+
+	static async getHistoryByOrderId(order_id){
 		const query = `
 			SELECT id, name, gold, NULL as take_gold, NULL as left_gold, weight, price, NULL as pay_price, NULL as left_price, date, NULL as pay_date, NULL as change_date, description, created_at, "pawn" as status
 			FROM pawns

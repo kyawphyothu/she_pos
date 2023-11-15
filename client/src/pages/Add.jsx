@@ -14,6 +14,7 @@ import { AppContext } from '../AppContextProvider';
 import { format, parse } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { styled, lighten, darken } from '@mui/system';
+import MMDateInput from '../components/MMDateInput';
 
 export default function Add() {
 	const { snackNoti } = useContext(AppContext);
@@ -236,6 +237,9 @@ export default function Add() {
 								}}
 							/>
 						</LocalizationProvider>
+					</Grid>
+					<Grid item xs={12}>
+						<MMDateInput />
 					</Grid>
 					<Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between" }}>
 						{acceptors.map((a) => {

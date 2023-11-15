@@ -4,11 +4,11 @@ import { unstable_HistoryRouter, useNavigate, useSearchParams } from 'react-rout
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import GetMMDate from '../helper/GetMMDate';
 import NumChangeEngToMM from '../helper/NumChangeEngToMM';
-import { green, grey } from '@mui/material/colors';
+import { green, grey, orange, teal } from '@mui/material/colors';
 import CustomBadge from '../components/CustomBudge';
 import CustomDialog from '../components/CustomDialog';
 import CustomDateInput from '../components/CustomDateInput';
-import { getAllvillages, searchOrder } from '../apiCalls';
+import { getAllvillages, getTodayOrder, searchOrder } from '../apiCalls';
 import { LoadingButton } from '@mui/lab';
 import CalculateWeight from '../helper/CalculateWeight';
 
@@ -54,7 +54,6 @@ export default function Search() {
 		if(!nameOrCode) return;
 		setIsLoadingBtn(true);
 
-		localStorage.setItem("q", nameOrCode);
 
 		const res = await searchOrder(nameOrCode);
 		setIsLoadingBtn(false);
@@ -63,15 +62,26 @@ export default function Search() {
 		}
 	}
 
+	const handleClickDetail = (id) => {
+		localStorage.setItem("q", searchText);
+		navigate(`/detail/${id}`);
+	}
+
 	useEffect(() => {
 		const fetchVillages = async () => {
 			const result = await getAllvillages();
 			if(!result.ok) return;
 			setVillages(result);
 		}
+		const fetchTodayOrder = async () => {
+			if(searchText) return;
+			const result = await getTodayOrder();
+			setOrders(result)
+		}
 
 		fetchVillages();
 		handleSearch();
+		fetchTodayOrder();
 	}, [])
 
 	useEffect(() => {
@@ -106,25 +116,34 @@ export default function Search() {
 					orders.length ? (
 						orders.map((order) => {
 							return (
-								<Grid item xs={12} key={order.id}>
-									<Stack
-										sx={{ cursor: "pointer" }}
-										onClick={() => navigate(`/detail/${order.id}`)}>
-										<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem", textDecoration: "underline" }}>{order.name}</Typography>
-										<Typography variant='subtitle1'>{order.village}</Typography>
-										<Typography variant='subtitle1'>{order.gold}</Typography>
-										<Typography variant='subtitle1'>{CalculateWeight(order.weight)}</Typography>
-										<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(order.price || 0, true)} ကျပ်တိတိ</Typography>
-										<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(order.date))}</Typography>
-										<span>
-											<CustomBadge>{order.acceptor}</CustomBadge>
-											{
-												Boolean(order.redeem) && (
-													<CustomBadge color='error'>ရွေးပြီး</CustomBadge>
-												)
-											}
-										</span>
-									</Stack>
+								<Grid item xs={12}>
+									<Box className="floatingCard" sx={{ borderRadius: "0.1rem", mb: 2 }}>
+										<Stack>
+											<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>{order.name}</Typography>
+											{/* <Typography variant='subtitle1' color={teal[500]}>{FormatCode(order.code)}</Typography> */}
+											<Typography variant='subtitle1'>{order.village}</Typography>
+											<Typography variant='subtitle1'>{order.phone}</Typography>
+											<Typography variant='subtitle1'>{order.gold}</Typography>
+											<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(order.weight)}</Typography>
+											<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(order.price || 0, true)} ကျပ်တိတိ</Typography>
+											<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(order.date))}</Typography>
+											<span>
+												<CustomBadge>{order.acceptor}</CustomBadge>
+												{
+													Boolean(order.redeem) && (
+														<CustomBadge color='error'>ရွေးပြီး</CustomBadge>
+													)
+												}
+											</span>
+											<Button
+												variant='contained'
+												size='small'
+												sx={{ mt: 2 }}
+												onClick={() => handleClickDetail(order.id)}>
+												detail
+											</Button>
+										</Stack>
+									</Box>
 								</Grid>
 							)
 						})

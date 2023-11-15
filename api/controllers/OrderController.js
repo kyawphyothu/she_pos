@@ -14,6 +14,11 @@ exports.show = async (req, res) => {
 	res.json(result[0]);
 }
 
+exports.thisDay = async (req, res) => {
+	const result = await Order.getThisDayOrder();
+	res.json(result);
+}
+
 exports.history = async (req, res) => {
 	const order_id = req.params.id;
 

@@ -29,6 +29,14 @@ export default function Detail() {
 		content: () => printRef.current,
 	});
 
+	const handleClickBckBtn = () => {
+		if(!q===null){
+			navigate(`/search?q=${q}`)
+		}else{
+			navigate(`/search`);
+		}
+	}
+
 	useEffect(() => {
 		const fetchOrder = async () => {
 			const result = await getOrderById(id);
@@ -59,14 +67,14 @@ export default function Detail() {
 				):(
 					<>
 						<Box sx={{ mb: 1, display: "flex", justifyContent: "space-between" }}>
-							<IconButton onClick={() => navigate(`/search?q=${q}`)}>
+							<IconButton onClick={handleClickBckBtn}>
 								<ArrowBackRoundedIcon />
 							</IconButton>
 							<IconButton sx={{ color: orange[400] }} onClick={handlePrint}>
 								<PrintRoundedIcon  />
 							</IconButton>
 							<div style={{ display: "none" }}>
-								<ComponentToPrint ref={printRef} />
+								<ComponentToPrint ref={printRef} order={order} histories={histories} />
 							</div>
 							{/* <div ref={printRef}>hello</div> */}
 						</Box>
@@ -197,57 +205,6 @@ export default function Detail() {
 									)
 								})
 							}
-							{/* ထား */}
-							{/* <Grid item xs={12}>
-								<Stack>
-									<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>အောင်အောင်မင်း</Typography>
-									<Typography variant='subtitle1'>နားကပ် ဆွဲကြိုးအပြာ နားဆွဲ</Typography>
-									<Typography variant='subtitle1' color={orange[500]}>၁၂ကျပ် ၇ပဲ ၄ရွေး</Typography>
-									<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(123000, true)} ကျပ်တိတိ</Typography>
-									<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date())}</Typography>
-									<Typography variant='subtitle1' color={grey[500]}>--မှတ်ချက်များဖြစ်ပါသည်--</Typography>
-								</Stack>
-							</Grid> */}
-							{/* ထပ်ယူ */}
-							{/* <Grid item xs={12}>
-								<Stack>
-									<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>
-										အောင်အောင်မင်း
-										<Typography variant='body' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ထပ်ယူ)</Typography>
-									</Typography>
-									<Typography variant='subtitle1'>နားကပ် နားဆွဲ || -</Typography>
-									<Typography variant='subtitle1' color={orange[500]}>၁ပဲ ၄ရွေး || -</Typography>
-									<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(123000, true)} ကျပ်တိတိ</Typography>
-									<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date())}</Typography>
-									<Typography variant='subtitle1' color={grey[500]}>--မှတ်ချက်များဖြစ်ပါသည်--</Typography>
-								</Stack>
-							</Grid> */}
-							{/* အတိုးဆပ် */}
-							{/* <Grid item xs={12}>
-								<Stack>
-									<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>
-										အောင်အောင်မင်း
-										<Typography variant='body' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(အတိုးဆပ်)</Typography>
-									</Typography>
-									<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(123000, true)} ကျပ်တိတိ (ဆပ်)</Typography>
-									<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(123000, true)} ကျပ်တိတိ (ကျန်)</Typography>
-									<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date())} (ဆပ်)</Typography>
-									<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date())} (ပြောင်း)</Typography>
-									<Typography variant='subtitle1' color={grey[500]}>--မှတ်ချက်များဖြစ်ပါသည်--</Typography>
-								</Stack>
-							</Grid> */}
-							{/* ရွေး */}
-							{/* <Grid item xs={12}>
-								<Stack>
-									<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>
-										အောင်အောင်မင်း
-										<Typography variant='body' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ရွေး)</Typography>
-									</Typography>
-									<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(123000, true)} ကျပ်တိတိ</Typography>
-									<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(2023, 10, 11))}</Typography>
-									<Typography variant='subtitle1' color={grey[500]}>--မှတ်ချက်များဖြစ်ပါသည်--</Typography>
-								</Stack>
-							</Grid> */}
 						</Grid>
 					</>
 				)
