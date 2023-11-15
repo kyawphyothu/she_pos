@@ -4,13 +4,13 @@ export default function FormatCode(inputString) {
 
 	// Use slice to extract substrings and concatenate them with the desired formatting
 	const formattedNumber =
-	inputString.slice(0, 4) +
+	inputString.slice(0, 3) +
 	' ' +
-	inputString.slice(4, 8) +
+	inputString.slice(3, 6) +
 	' ' +
-	inputString.slice(8, 11) +
+	inputString.slice(6, 9) +
 	' ' +
-	inputString.slice(11);
+	inputString.slice(9, 13)
 
 	return formattedNumber;
 }

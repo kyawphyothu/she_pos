@@ -57,7 +57,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 										<Stack>
 											<Typography variant='subtitle2'>
 												{history.name}
-												<Typography variant='body' sx={{ fontSize: "1rem" }}>(အပေါင်ထား)</Typography>
+												<Typography variant='body2'>(အပေါင်ထား)</Typography>
 											</Typography>
 											<Typography variant='body2'>{history.gold}</Typography>
 											<Typography variant='body2'>{CalculateWeight(history.weight)}</Typography>
@@ -74,7 +74,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 										<Stack>
 											<Typography variant='subtitle2'>
 												{history.name}
-												<Typography variant='body' sx={{ fontSize: "1rem" }}>(ထပ်ယူ)</Typography>
+												<Typography variant='body2'>(ထပ်ယူ)</Typography>
 											</Typography>
 											<Typography variant='body2'>{history.gold}</Typography>
 											<Typography variant='body2'>{CalculateWeight(history.weight)}</Typography>
@@ -91,7 +91,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 										<Stack>
 											<Typography variant='subtitle2'>
 												{history.name}
-												<Typography variant='body' sx={{ fontSize: "1rem" }}>(အတိုးဆပ်)</Typography>
+												<Typography variant='body2'>(အတိုးဆပ်)</Typography>
 											</Typography>
 											<Typography variant='body2'>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (ဆပ်)</Typography>
 											<Typography variant='body2'>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
@@ -108,7 +108,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 										<Stack>
 											<Typography variant='subtitle2'>
 												{history.name}
-												<Typography variant='body' sx={{ fontSize: "1rem" }}>(ခွဲရွေး)</Typography>
+												<Typography variant='body2'>(ခွဲရွေး)</Typography>
 											</Typography>
 											<Typography variant='body2'>{history.take_gold} (ရွေး)</Typography>
 											<Typography variant='body2'>{history.left_gold} (ကျန်)</Typography>
@@ -128,7 +128,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 										<Stack>
 											<Typography variant='subtitle2'>
 												{history.name}
-												<Typography variant='body' sx={{ fontSize: "1rem" }}>(ရွေး)</Typography>
+												<Typography variant='body2'>(ရွေး)</Typography>
 											</Typography>
 											<Typography variant='body2'>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.date))}</Typography>
