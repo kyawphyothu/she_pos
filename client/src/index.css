@@ -53,3 +53,7 @@ code {
 .MuiDialogActions-root{
 	padding: 24px !important;
 }
+
+.drawingBuffer{
+	height: 0 !important;
+}

@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Divider, Grid, Stack, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Button, Dialog, Divider, Grid, Stack, TextField, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { unstable_HistoryRouter, useNavigate, useSearchParams } from 'react-router-dom'
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
@@ -12,27 +12,35 @@ import { getAllvillages, getTodayOrder, searchOrder } from '../apiCalls';
 import { LoadingButton } from '@mui/lab';
 import CalculateWeight from '../helper/CalculateWeight';
 import BarcodeScanner from '../components/BarcodeScanner';
-// import { BarcodeScanner } from 'react-barcode-scanner';
 
 export default function Search() {
 	const navigate = useNavigate();
 	const [searchParams, setSearchParams] = useSearchParams()
 
 	const [openFilterDialog, setOpenFilterDialog] = useState(false);
+	const [openCameraDialog, setOpenCameraDialog] = useState(false);
 	const [villages, setVillages] = useState([]);
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 	const [orders, setOrders] = useState([]);
 	const [searchText, setSearchText] = useState(searchParams.get("q"));
 
-	const [barcode, setBarcode] = useState('');
 	const handleBarcodeDetected = (code) => {
-		setBarcode(code);
-		// Do something with the barcode, e.g., send it to the server
+		setSearchText(code)
+		setSearchParams({q: code});
+		setOpenCameraDialog(false);
 	};
+
+	const handleCloseCameraDialog = () => {
+		setOpenCameraDialog(false);
+	};
+	const CameraDialogActionBtns = () => {
+		return <></>
+	}
 
 	const handleCloseFilterDialog = () => {
 		setOpenFilterDialog(false);
 	};
+
 
 	const filterDialogActionBtns = () => {
 		return (
@@ -61,7 +69,6 @@ export default function Search() {
 		const nameOrCode = searchText;
 		if(!nameOrCode) return;
 		setIsLoadingBtn(true);
-
 
 		const res = await searchOrder(nameOrCode);
 		setIsLoadingBtn(false);
@@ -98,8 +105,6 @@ export default function Search() {
 
 	return (
 		<>
-			<BarcodeScanner onDetected={handleBarcodeDetected} />
-			<Typography>{barcode !== "" ? barcode : "no"}</Typography>
 			<Stack direction={"row"} spacing={1} sx={{ display: "flex", mb: 1 }}>
 				<TextField
 					label="အမည် (သို့) code"
@@ -118,6 +123,7 @@ export default function Search() {
 					<TuneRoundedIcon />
 				</Button>
 			</Stack>
+			<LoadingButton loading={false} variant='outlined' fullWidth onClick={() => setOpenCameraDialog(true)} sx={{ mb: 1 }}>camera</LoadingButton>
 			<LoadingButton loading={isLoadingBtn} variant='contained' fullWidth onClick={() => setSearchParams({q: searchText})}>search</LoadingButton>
 
 			{/* search result */}
@@ -209,6 +215,16 @@ export default function Search() {
 						/>
 					</Grid>
 				</Grid>
+			</CustomDialog>
+
+			{/* barcode camera dialog reader */}
+			<CustomDialog
+				open={openCameraDialog}
+				title="Scanner"
+				handleClose={handleCloseCameraDialog}
+				ActionButtons={CameraDialogActionBtns}
+			>
+				<BarcodeScanner onDetected={handleBarcodeDetected} />
 			</CustomDialog>
 		</>
 	)

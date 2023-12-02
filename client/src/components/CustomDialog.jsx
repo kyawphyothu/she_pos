@@ -17,7 +17,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function CustomDialog(props) {
-	const { open, handleClose, children, title, ActionButtons, maxWidth="sm", scroll="body" } = props;
+	const { open, handleClose, children, title="", ActionButtons, maxWidth="sm", scroll="body" } = props;
 
 	return (
 		<div>
