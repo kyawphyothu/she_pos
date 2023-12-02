@@ -137,9 +137,9 @@ export default function Detail() {
 											{history.status === "htet_yu" ? (
 												<Grid item xs={12}>
 													<Stack>
-														<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>
+														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
 															{history.name}
-															<Typography variant='body' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ထပ်ယူ)</Typography>
+															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ထပ်ယူ)</Typography>
 														</Typography>
 														<Typography variant='subtitle1'>{history.gold}</Typography>
 														<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
@@ -154,9 +154,9 @@ export default function Detail() {
 											{history.status === "pay_interest" ? (
 												<Grid item xs={12}>
 													<Stack>
-														<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>
+														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
 															{history.name}
-															<Typography variant='body' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(အတိုးဆပ်)</Typography>
+															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(အတိုးဆပ်)</Typography>
 														</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (ဆပ်)</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
@@ -171,9 +171,9 @@ export default function Detail() {
 											{history.status === "half_redeem" ? (
 												<Grid item xs={12}>
 													<Stack>
-														<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>
+														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
 															{history.name}
-															<Typography variant='body' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ခွဲရွေး)</Typography>
+															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ခွဲရွေး)</Typography>
 														</Typography>
 														<Typography variant='subtitle1'>{history.take_gold} (ရွေး)</Typography>
 														<Typography variant='subtitle1'>{history.left_gold} (ကျန်)</Typography>
@@ -191,9 +191,9 @@ export default function Detail() {
 											{history.status === "redeem" ? (
 												<Grid item xs={12}>
 													<Stack>
-														<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>
+														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
 															{history.name}
-															<Typography variant='body' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ရွေး)</Typography>
+															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ရွေး)</Typography>
 														</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
 														<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(history.date))}</Typography>
