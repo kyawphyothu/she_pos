@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Quagga from 'quagga';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Modal } from '@mui/material';
 import "./style.css"
 
 const BarcodeScanner = ({ onDetected }) => {

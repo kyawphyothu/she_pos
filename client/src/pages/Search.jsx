@@ -28,6 +28,7 @@ export default function Search() {
 		setSearchText(code)
 		setSearchParams({q: code});
 		setOpenCameraDialog(false);
+		location.reload();
 	};
 
 	const handleCloseCameraDialog = () => {
@@ -132,7 +133,7 @@ export default function Search() {
 					orders.length ? (
 						orders.map((order) => {
 							return (
-								<Grid item xs={12}>
+								<Grid item xs={12} key={order.id}>
 									<Box className="floatingCard" sx={{ borderRadius: "0.1rem", mb: 2 }}>
 										<Stack>
 											<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>{order.name}</Typography>
