@@ -9,6 +9,7 @@ import NumChangeEngToMM from '../../helper/NumChangeEngToMM';
 import { red } from '@mui/material/colors';
 import { NoEncryption } from '@mui/icons-material';
 import logo from '../../assets/she1.png'
+import Barcode from 'react-barcode';
 
 const ComponentToPrint = forwardRef((props, ref) => {
 	const { order, histories } = props;
@@ -142,6 +143,10 @@ const ComponentToPrint = forwardRef((props, ref) => {
 						)
 					})
 				}
+				<Grid item xs={12}>
+					<Barcode value={order.code} width={2} height={50} fontSize={10} />
+				</Grid>
+
 				<Grid item textAlign={"center"} xs={12}>
 					<hr style={{ width: "80%", border: "none", borderTop: "2px dashed #000" }} />
 					<Typography variant='body2'>ဤဘောင်ချာဖြင့် ပြန်ရွေးပါ</Typography>

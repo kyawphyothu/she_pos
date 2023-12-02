@@ -11,6 +11,8 @@ import CustomDateInput from '../components/CustomDateInput';
 import { getAllvillages, getTodayOrder, searchOrder } from '../apiCalls';
 import { LoadingButton } from '@mui/lab';
 import CalculateWeight from '../helper/CalculateWeight';
+import BarcodeScanner from '../components/BarcodeScanner';
+// import { BarcodeScanner } from 'react-barcode-scanner';
 
 export default function Search() {
 	const navigate = useNavigate();
@@ -21,6 +23,12 @@ export default function Search() {
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 	const [orders, setOrders] = useState([]);
 	const [searchText, setSearchText] = useState(searchParams.get("q"));
+
+	const [barcode, setBarcode] = useState('');
+	const handleBarcodeDetected = (code) => {
+		setBarcode(code);
+		// Do something with the barcode, e.g., send it to the server
+	};
 
 	const handleCloseFilterDialog = () => {
 		setOpenFilterDialog(false);
@@ -90,6 +98,8 @@ export default function Search() {
 
 	return (
 		<>
+			<BarcodeScanner onDetected={handleBarcodeDetected} />
+			<Typography>{barcode !== "" ? barcode : "no"}</Typography>
 			<Stack direction={"row"} spacing={1} sx={{ display: "flex", mb: 1 }}>
 				<TextField
 					label="အမည် (သို့) code"
