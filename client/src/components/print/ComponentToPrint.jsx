@@ -64,7 +64,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 											</Typography>
 											<Typography variant='body2'>{history.gold}</Typography>
 											<Typography variant='body2'>{CalculateWeight(history.weight)}</Typography>
-											<Typography variant='body2'>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.date))}</Typography>
 											<Typography variant='body2'>--{history.description}--</Typography>
 										</Stack>
@@ -81,7 +81,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 											</Typography>
 											<Typography variant='body2'>{history.gold}</Typography>
 											<Typography variant='body2'>{CalculateWeight(history.weight)}</Typography>
-											<Typography variant='body2'>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.date))}</Typography>
 											<Typography variant='body2'>--{history.description}--</Typography>
 										</Stack>
@@ -96,8 +96,8 @@ const ComponentToPrint = forwardRef((props, ref) => {
 												{history.name}
 												<Typography variant='body2'>(အတိုးဆပ်)</Typography>
 											</Typography>
-											<Typography variant='body2'>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (ဆပ်)</Typography>
-											<Typography variant='body2'>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (ဆပ်)</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.pay_date))} (ဆပ်)</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.change_date))} (ပြောင်း)</Typography>
 											<Typography variant='body2'>--{history.description}--</Typography>
@@ -116,8 +116,8 @@ const ComponentToPrint = forwardRef((props, ref) => {
 											<Typography variant='body2'>{history.take_gold} (ရွေး)</Typography>
 											<Typography variant='body2'>{history.left_gold} (ကျန်)</Typography>
 											<Typography variant='body2'>{CalculateWeight(history.weight)}</Typography>
-											<Typography variant='body2'>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (သွင်း)</Typography>
-											<Typography variant='body2'>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (သွင်း)</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.date))}</Typography>
 											<Typography variant='body2'>--{history.description}--</Typography>
 										</Stack>
@@ -132,7 +132,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 												{history.name}
 												<Typography variant='body2'>(ရွေး)</Typography>
 											</Typography>
-											<Typography variant='body2'>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.date))}</Typography>
 											<Typography variant='body2'>--{history.description}--</Typography>
 										</Stack>
