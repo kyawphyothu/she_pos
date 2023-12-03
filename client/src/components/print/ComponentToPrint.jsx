@@ -143,8 +143,8 @@ const ComponentToPrint = forwardRef((props, ref) => {
 						)
 					})
 				}
-				<Grid item xs={12}>
-					<Barcode value={order.code} width={2} height={50} fontSize={10} />
+				<Grid item xs={12} display={"flex"} justifyContent={"center"}>
+					<Barcode value={order.code} width={2} height={50} fontSize={15} />
 				</Grid>
 
 				<Grid item textAlign={"center"} xs={12}>
