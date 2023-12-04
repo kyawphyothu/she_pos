@@ -12,6 +12,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { format, parse } from 'date-fns';
 import { AppContext } from '../AppContextProvider';
+import GetMMDate from '../helper/GetMMDate';
 
 export default function HtetYu() {
 	const { snackNoti } = useContext(AppContext);
@@ -21,6 +22,7 @@ export default function HtetYu() {
 	const [isFetching, setIsFetching] = useState(true);
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 	const [formData, setFormData] = useState({order_id: 0, name: "", price: 0, date: "", gold: "", weight: "", description: ""});
+	const [MMDate, setMMDate] = useState(GetMMDate(new Date()));
 
 	const printRef = useRef();
 	const dateRef = useRef();
@@ -51,6 +53,10 @@ export default function HtetYu() {
 	}
 	const handleSaveAndSubmit = () => {
 		handleSubmit();
+	}
+
+	const handleChangeDate = (newVal) => {
+		setMMDate(GetMMDate(newVal.$d));
 	}
 
 	const handleSubmit = async () => {
@@ -186,8 +192,10 @@ export default function HtetYu() {
 											defaultValue={dayjs(new Date())}
 											format={"DD/MM/YYYY"}
 											inputRef={dateRef}
+											onAccept={handleChangeDate}
 											slotProps={{
 												textField: {
+													helperText: MMDate,
 													size: 'small',
 													fullWidth: true,
 												}

@@ -11,6 +11,7 @@ import { createHalfRedeem, createRedeem, getOrderById } from '../apiCalls';
 import { useNavigate, useParams } from 'react-router-dom';
 import { format, parse } from 'date-fns';
 import { AppContext } from '../AppContextProvider';
+import GetMMDate from '../helper/GetMMDate';
 
 export default function Redeem() {
 	const { snackNoti } = useContext(AppContext);
@@ -20,6 +21,7 @@ export default function Redeem() {
 	const [isFetching, setIsFetching] = useState(true);
 	const [order, setOrder] = useState({});
 	const [formData, setFormData] = useState({order_id: "", name: "", price: "", pay_price: "", left_Price: "", take_gold: "", left_gold: "", weight: "", date: "", description: ""});
+	const [MMDate, setMMDate] = useState(GetMMDate(new Date()));
 
 	const kRef = useRef(0);	//ကျပ်
 	const pRef = useRef(0);	//ပဲ
@@ -41,6 +43,10 @@ export default function Redeem() {
 		}
 
 		setFormData(prev => ({...prev, [e.target.name]: value}))
+	}
+
+	const handleChangeDate = (newVal) => {
+		setMMDate(GetMMDate(newVal));
 	}
 
 	const handleSubmit = async () => {
@@ -245,8 +251,10 @@ export default function Redeem() {
 											defaultValue={dayjs(new Date())}
 											format={"DD/MM/YYYY"}
 											inputRef={dateRef}
+											onAccept={handleChangeDate}
 											slotProps={{
 												textField: {
+													helperText: MMDate,
 													size: 'small',
 													fullWidth: true,
 												}

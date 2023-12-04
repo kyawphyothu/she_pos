@@ -11,6 +11,7 @@ import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { format, parse } from 'date-fns';
+import GetMMDate from '../helper/GetMMDate';
 
 export default function PayInterest() {
 	const { snackNoti } = useContext(AppContext);
@@ -19,6 +20,7 @@ export default function PayInterest() {
 	const [isFetching, setIsFetching] = useState(true);
 	const [order, setOrder] = useState({});
 	const [formData, setFormData] = useState({order_id: 0, name: "", pay_price: 0, left_price: 0, pay_date: "", change_date: "", description: ""});
+	const [MMDate, setMMDate] = useState({pay: GetMMDate(new Date()), change: ""})
 
 	const paydateRef = useRef();
 	const changedateRef = useRef();
@@ -34,6 +36,10 @@ export default function PayInterest() {
 		}
 
 		setFormData(prev => ({...prev, [e.target.name]: value}))
+	}
+
+	const handleChangeDate = (newVal, item) => {
+		setMMDate((prev) => ({...prev, [item]: GetMMDate(newVal)}));
 	}
 
 	const handleSubmit = async () => {
@@ -149,8 +155,10 @@ export default function PayInterest() {
 											defaultValue={dayjs(new Date())}
 											format={"DD/MM/YYYY"}
 											inputRef={paydateRef}
+											onAccept={(newVal) => handleChangeDate(newVal, "pay")}
 											slotProps={{
 												textField: {
+													helperText: MMDate.pay,
 													size: 'small',
 													fullWidth: true,
 													required: true
@@ -166,8 +174,10 @@ export default function PayInterest() {
 											// defaultValue={dayjs(new Date())}
 											format={"DD/MM/YYYY"}
 											inputRef={changedateRef}
+											onAccept={(newVal) => handleChangeDate(newVal, "change")}
 											slotProps={{
 												textField: {
+													helperText: MMDate.change,
 													size: 'small',
 													fullWidth: true,
 													required: true

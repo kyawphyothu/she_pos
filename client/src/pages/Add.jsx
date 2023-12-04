@@ -6,15 +6,11 @@ import dayjs from 'dayjs'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import GetMMDate from '../helper/GetMMDate';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
-import CustomDateInput from '../components/CustomDateInput';
-import CustomRadioButton from '../components/CustomRadioButton';
-import { yellow } from '@mui/material/colors';
 import { createPawn, getAllAcceptors, getAllvillages } from '../apiCalls';
 import { AppContext } from '../AppContextProvider';
 import { format, parse } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { styled, lighten, darken } from '@mui/system';
-import MMDateInput from '../components/MMDateInput';
 
 export default function Add() {
 	const { snackNoti } = useContext(AppContext);
@@ -23,6 +19,7 @@ export default function Add() {
 	const [acceptors, setAcceptors] = useState([]);
 	const [formData, setFormData] = useState({name: "", village_id: 0, phone: "", gold: "", weight: 0, price: 0, date: "", acceptor_id: 1, description: ""})
 	const [error, setError] = useState({name: 0, village_id: 0, gold: 0, weight: 0, price: 0, date: 0})
+	const [MMdate, setMMDate] = useState(GetMMDate(new Date()));
 
 	const kRef = useRef();	//ကျပ်
 	const pRef = useRef();	//ပဲ
@@ -59,6 +56,10 @@ export default function Add() {
 		}
 
 		setFormData(prev => ({...prev, [e.target.name]: value}))
+	}
+
+	const handelChangeDate = (newVal) => {
+		setMMDate(GetMMDate(newVal.$d));
 	}
 
 	const handleSubmit = async () => {
@@ -229,17 +230,16 @@ export default function Add() {
 								defaultValue={dayjs(new Date())}
 								format={"DD/MM/YYYY"}
 								inputRef={dateRef}
+								onAccept={handelChangeDate}
 								slotProps={{
 									textField: {
+										helperText: MMdate,
 										size: 'small',
 										fullWidth: true,
 									}
 								}}
 							/>
 						</LocalizationProvider>
-					</Grid>
-					<Grid item xs={12}>
-						<MMDateInput />
 					</Grid>
 					<Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between" }}>
 						{acceptors.map((a) => {
