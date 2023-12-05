@@ -1,6 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 import React, { forwardRef } from 'react'
 import logo from '../../assets/she1.png'
+import { grey } from '@mui/material/colors';
 
 const PrintTableBorrow = forwardRef((props, ref) => {
 	// const { name, date, price, paidPrice, pay, formFields } = props;
@@ -30,13 +31,13 @@ const PrintTableBorrow = forwardRef((props, ref) => {
 					<Typography variant='subtitle1' fontWeight={600} textAlign={"right"}>ဦးရေ</Typography>
 				</Grid>
 				{
-					formFields.filter((i) => i.name !== "").map((i) => {
+					formFields.filter((i) => i.name !== "").map((i, index) => {
 						return (
 							<React.Fragment key={i.id}>
-								<Grid item xs={6}>
+								<Grid item xs={6} sx={ index%2 && { backgroundColor: grey[200] }}>
 									<Typography variant='subtitle2'>{i.name}</Typography>
 								</Grid>
-								<Grid item xs={6}>
+								<Grid item xs={6} sx={ index%2 && { backgroundColor: grey[200] }}>
 									<Typography variant='subtitle2' textAlign={"right"}>{i.count}</Typography>
 								</Grid>
 							</React.Fragment>
