@@ -2,6 +2,7 @@ import { Grid, Typography } from '@mui/material';
 import React, { forwardRef } from 'react'
 import logo from '../../assets/she1.png'
 import { grey } from '@mui/material/colors';
+import "./style.css"
 
 const PrintTableBorrow = forwardRef((props, ref) => {
 	// const { name, date, price, paidPrice, pay, formFields } = props;
@@ -31,13 +32,15 @@ const PrintTableBorrow = forwardRef((props, ref) => {
 					<Typography variant='subtitle1' fontWeight={600} textAlign={"right"}>ဦးရေ</Typography>
 				</Grid>
 				{
-					formFields.filter((i) => i.name !== "").map((i, index) => {
+					formFields.filter((i) => i.name !== "").map((i) => {
 						return (
 							<React.Fragment key={i.id}>
-								<Grid item xs={6} sx={ index%2 && { backgroundColor: grey[200] }}>
+								<Grid item xs={6} sx={{ backgroundColor: grey[200] }} className='fill-with-dashes'>
 									<Typography variant='subtitle2'>{i.name}</Typography>
+									<div className="filler"></div>
 								</Grid>
-								<Grid item xs={6} sx={ index%2 && { backgroundColor: grey[200] }}>
+								<Grid item xs={6} sx={{ backgroundColor: grey[200] }} className='fill-with-dashes'>
+									<div className="filler"></div>
 									<Typography variant='subtitle2' textAlign={"right"}>{i.count}</Typography>
 								</Grid>
 							</React.Fragment>
@@ -61,5 +64,5 @@ const styles = {
 		backgroundColor: "#fff",
 		color: "#181818",
 		fontWeight: "lighter",
-	}
+	},
 }

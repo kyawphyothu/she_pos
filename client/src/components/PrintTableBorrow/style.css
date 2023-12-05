@@ -1,0 +1,12 @@
+.fill-with-dashes {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.filler {
+	flex-grow: 1;
+	border-bottom: 1px dashed #000; /* Adjust color and style as needed */
+	content: "\00a0"; /* Add a non-breaking space character to ensure the border is visible */
+}
