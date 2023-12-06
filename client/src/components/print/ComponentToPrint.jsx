@@ -45,7 +45,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 			</Stack>
 
 
-			<Grid container spacing={3} mb={3}>
+			<Grid container rowGap={3} mb={3}>
 				<Grid item xs={12}>
 					<Divider sx={{ color: "red" }}>
 						<Chip color='primary' label="မှတ်တမ်းများ" />
