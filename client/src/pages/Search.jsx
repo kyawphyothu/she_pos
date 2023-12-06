@@ -12,6 +12,7 @@ import { getAllvillages, getTodayOrder, searchOrder } from '../apiCalls';
 import { LoadingButton } from '@mui/lab';
 import CalculateWeight from '../helper/CalculateWeight';
 import BarcodeScanner from '../components/BarcodeScanner';
+import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 
 export default function Search() {
 	const navigate = useNavigate();
@@ -118,13 +119,21 @@ export default function Search() {
 				/>
 				<Button
 					variant='outlined'
+					color="success"
+					onClick={() => setOpenCameraDialog(true)}
+					size='small'
+					>
+					<QrCodeScannerIcon />
+				</Button>
+				{/* <Button
+					variant='outlined'
+					size='small'
 					onClick={() => {
 						setOpenFilterDialog(true);
 					}}>
 					<TuneRoundedIcon />
-				</Button>
+				</Button> */}
 			</Stack>
-			<LoadingButton loading={false} variant='outlined' fullWidth onClick={() => setOpenCameraDialog(true)} sx={{ mb: 1 }}>camera</LoadingButton>
 			<LoadingButton loading={isLoadingBtn} variant='contained' fullWidth onClick={() => setSearchParams({q: searchText})}>search</LoadingButton>
 
 			{/* search result */}
