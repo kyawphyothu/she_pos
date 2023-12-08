@@ -30,10 +30,10 @@ export default function Detail() {
 	});
 
 	const handleClickBckBtn = () => {
-		if(q!==null){
-			navigate(`/search?q=${q}`)
-		}else{
+		if(q===null || q==="null"){
 			navigate(`/search`);
+		}else{
+			navigate(`/search?q=${q}`)
 		}
 	}
 

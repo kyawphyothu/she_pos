@@ -273,12 +273,7 @@ export default function Redeem() {
 									/>
 								</Grid>
 								<Grid item xs={12}>
-									<LoadingButton variant='outlined' sx={{ mr: 1 }} type='submit'>save</LoadingButton>
-									<LoadingButton
-										variant='contained'
-										type='submit'>
-										save & print
-									</LoadingButton>
+									<LoadingButton variant='contained' sx={{ mr: 1 }} type='submit'>save</LoadingButton>
 								</Grid>
 							</Grid>
 						</form>

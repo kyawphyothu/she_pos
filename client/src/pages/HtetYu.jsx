@@ -214,8 +214,7 @@ export default function HtetYu() {
 									/>
 								</Grid>
 								<Grid item xs={12}>
-									<LoadingButton loading={isLoadingBtn} variant='outlined' sx={{ mr: 1 }} type='submit'>save</LoadingButton>
-									<LoadingButton loading={isLoadingBtn} variant='contained' type='submit'>save & print</LoadingButton>
+									<LoadingButton loading={isLoadingBtn} variant='contained' sx={{ mr: 1 }} type='submit'>save</LoadingButton>
 								</Grid>
 							</Grid>
 						</form>

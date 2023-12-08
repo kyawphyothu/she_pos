@@ -17,6 +17,7 @@ export default function Add() {
 
 	const [villages, setVillages] = useState([]);
 	const [acceptors, setAcceptors] = useState([]);
+	const [saveType, setSaveType] = useState("save");
 	const [formData, setFormData] = useState({name: "", village_id: 0, phone: "", gold: "", weight: 0, price: 0, date: "", acceptor_id: 1, description: ""})
 	const [error, setError] = useState({name: 0, village_id: 0, gold: 0, weight: 0, price: 0, date: 0})
 	const [MMdate, setMMDate] = useState(GetMMDate(new Date()));
@@ -85,7 +86,9 @@ export default function Add() {
 		if(res.ok){
 			snackNoti({type: "success", msg: res.msg});
 			localStorage.setItem("acceptor_id", data.acceptor_id);
-			navigate("/");
+
+			if(saveType === "save") navigate(`/`);
+			if(saveType === "saveandprint") navigate(`/detail/${res.id}`);
 		} else {
 			if(res.err === "validation"){
 				Object.keys(res.validation).map((i) => setError(prev => ({...prev, [i]: 1})));
@@ -266,8 +269,8 @@ export default function Add() {
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<LoadingButton variant='outlined' sx={{ mr:2 }} type='submit'>save</LoadingButton>
-						<LoadingButton variant='contained'>save & print</LoadingButton>
+						<LoadingButton variant='outlined' sx={{ mr:2 }} type='submit' onClick={() => setSaveType("save")}>save</LoadingButton>
+						<LoadingButton variant='contained' type='submit' onClick={() => setSaveType("saveandprint")}>save & print</LoadingButton>
 					</Grid>
 				</Grid>
 			</form>
