@@ -40,6 +40,6 @@ app.use("/half_redeem", HalfRedeemRoutes)
 app.use("/redeem", RedeemRoutes)
 app.use("/order", OrderRoutes)
 
-app.listen(8000, () => {
-	console.log("server is running in port 8000")
+app.listen(process.env.PORT, () => {
+	console.log(`server is running in port ${process.env.PORT}`)
 })
