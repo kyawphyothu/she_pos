@@ -12,6 +12,7 @@ import { useReactToPrint } from 'react-to-print';
 import { getHistoryByOrderId, getOrderById } from '../apiCalls';
 import CalculateWeight from '../helper/CalculateWeight';
 import FormatCode from '../helper/FormetCode';
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 
 export default function Detail() {
 	const { id } = useParams();
@@ -20,6 +21,7 @@ export default function Detail() {
 	const [order, setOrder] = useState({});
 	const [histories, setHistories] = useState([]);
 	const [isFetching, setIsFetching] = useState(true);
+	const [dateLang, setDateLang] = useState("mm");
 
 	const printRef = useRef();
 
@@ -36,6 +38,11 @@ export default function Detail() {
 			navigate(`/search?q=${q}`)
 		}
 	}
+
+	const toggleDateLang = () => {
+		dateLang==="mm" ? setDateLang("eng") : setDateLang("mm");
+		return;
+	};
 
 	useEffect(() => {
 		const fetchOrder = async () => {
@@ -87,7 +94,14 @@ export default function Detail() {
 								<Typography variant='subtitle1'>{order.phone}</Typography>
 								<Typography variant='subtitle1'>{order.gold}</Typography>
 								<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(order.weight)}</Typography>
-								<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(order.date))}</Typography>
+								<Typography variant='subtitle1' color={grey[500]}>
+									{
+										dateLang==="mm" ?
+										GetMMDate(new Date(order.date)) :
+										`${new Date(order.date).getDate()}-${new Date(order.date).getMonth()+1}-${new Date(order.date).getFullYear()}`
+									}
+									<IconButton color='warning' onClick={toggleDateLang}><ChangeCircleIcon /></IconButton>
+								</Typography>
 								<span>
 									<CustomBadge>{order.acceptor}</CustomBadge>
 									{
@@ -127,7 +141,13 @@ export default function Detail() {
 														<Typography variant='subtitle1'>{history.gold}</Typography>
 														<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(history.date))}</Typography>
+														<Typography variant='subtitle1' color={grey[500]}>
+															{
+																dateLang==="mm" ?
+																GetMMDate(new Date(history.date)) :
+																`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
+															}
+														</Typography>
 														<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
 													</Stack>
 												</Grid>
@@ -144,7 +164,13 @@ export default function Detail() {
 														<Typography variant='subtitle1'>{history.gold}</Typography>
 														<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(history.date))}</Typography>
+														<Typography variant='subtitle1' color={grey[500]}>
+															{
+																dateLang==="mm" ?
+																GetMMDate(new Date(history.date)) :
+																`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
+															}
+														</Typography>
 														<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
 													</Stack>
 												</Grid>
@@ -160,8 +186,20 @@ export default function Detail() {
 														</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (ဆပ်)</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(history.pay_date))} (ဆပ်)</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(history.change_date))} (ပြောင်း)</Typography>
+														<Typography variant='subtitle1' color={grey[500]}>
+															{
+																dateLang==="mm" ?
+																GetMMDate(new Date(history.pay_date)) :
+																`${new Date(history.pay_date).getDate()}-${new Date(history.pay_date).getMonth()+1}-${new Date(history.pay_date).getFullYear()}`
+															} (ဆပ်)
+														</Typography>
+														<Typography variant='subtitle1' color={grey[500]}>
+															{
+																dateLang==="mm" ?
+																GetMMDate(new Date(history.change_date)) :
+																`${new Date(history.change_date).getDate()}-${new Date(history.change_date).getMonth()+1}-${new Date(history.change_date).getFullYear()}`
+															} (ပြောင်း)
+														</Typography>
 														<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
 													</Stack>
 												</Grid>
@@ -180,7 +218,13 @@ export default function Detail() {
 														<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (သွင်း)</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(history.date))}</Typography>
+														<Typography variant='subtitle1' color={grey[500]}>
+															{
+																dateLang==="mm" ?
+																GetMMDate(new Date(history.date)) :
+																`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
+															}
+														</Typography>
 														{/* <Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(history.change_date))} (ပြောင်း)</Typography> */}
 														<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
 													</Stack>
@@ -196,7 +240,13 @@ export default function Detail() {
 															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ရွေး)</Typography>
 														</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(history.date))}</Typography>
+														<Typography variant='subtitle1' color={grey[500]}>
+															{
+																dateLang==="mm" ?
+																GetMMDate(new Date(history.date)) :
+																`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
+															}
+														</Typography>
 														<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
 													</Stack>
 												</Grid>
