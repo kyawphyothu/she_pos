@@ -19,7 +19,7 @@ export default function PayInterest() {
 
 	const [isFetching, setIsFetching] = useState(true);
 	const [order, setOrder] = useState({});
-	const [formData, setFormData] = useState({order_id: 0, name: "", pay_price: 0, left_price: 0, pay_date: "", change_date: "", description: ""});
+	const [formData, setFormData] = useState({order_id: 0, name: "", pay_price: 0, pay_date: "", change_date: "", description: ""});
 	const [MMDate, setMMDate] = useState({pay: GetMMDate(new Date()), change: ""})
 
 	const paydateRef = useRef();
@@ -137,7 +137,7 @@ export default function PayInterest() {
 										onChange={handleChangeFormData}
 									/>
 								</Grid>
-								<Grid item xs={12}>
+								{/* <Grid item xs={12}>
 									<TextField
 										label="ကျန်ငွေ"
 										name='left_price'
@@ -147,7 +147,7 @@ export default function PayInterest() {
 										required
 										onChange={handleChangeFormData}
 									/>
-								</Grid>
+								</Grid> */}
 								<Grid item xs={12}>
 									<LocalizationProvider dateAdapter={AdapterDayjs}>
 										<MobileDatePicker

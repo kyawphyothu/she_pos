@@ -98,7 +98,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 												<Typography variant='body2'>(အတိုးဆပ်)</Typography>
 											</Typography>
 											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (ဆပ်)</Typography>
-											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
+											{/* <Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography> */}
 											<Typography variant='body2'>{GetMMDate(new Date(history.pay_date))} (ဆပ်)</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.change_date))} (ပြောင်း)</Typography>
 											<Typography variant='body2'>--{history.description}--</Typography>

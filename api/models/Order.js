@@ -50,7 +50,7 @@ class Order{
 			FROM pawns
 			WHERE order_id = ?
 			UNION
-			SELECT id, name, NULL as gold, NULL as take_gold, NULL as left_gold, NULL as weight, NULL as price, pay_price, left_price, NULL as date, pay_date, change_date, description, created_at, "pay_interest" as status
+			SELECT id, name, NULL as gold, NULL as take_gold, NULL as left_gold, NULL as weight, NULL as price, pay_price, NULL as left_price, NULL as date, pay_date, change_date, description, created_at, "pay_interest" as status
 			FROM pay_interests
 			WHERE order_id = ?
 			UNION

@@ -3,7 +3,6 @@ CREATE TABLE pay_interests (
   order_id INT NOT NULL,
   name VARCHAR(255) NOT NULL,
   pay_price INT NOT NULL,
-  left_price INT NOT NULL,
   pay_date DATETIME NOT NULL,
   change_date DATETIME NULL,
   description LONGTEXT NULL,

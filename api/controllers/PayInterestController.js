@@ -5,13 +5,13 @@ exports.create = async (req, res) => {
 	const { data } = req.body; // {order_id, name,pay_price, left_price, pay_date, change_date, description=""}
 
 	// validation
-	if(!data.order_id || !data.name || !data.pay_price || !data.left_price || !data.pay_date || !data.change_date ){
+	if(!data.order_id || !data.name || !data.pay_price || !data.pay_date || !data.change_date ){
 		let errObject = {};
 
 		data.order_id ? "": errObject.order_id="err";
 		data.name ? "": errObject.name="err";
 		data.pay_price ? "": errObject.pay_price="err";
-		data.left_price ? "": errObject.left_price="err";
+		// data.left_price ? "": errObject.left_price="err";
 		data.pay_date ? "": errObject.pay_date="err";
 		data.change_date ? "": errObject.change_date="err";
 
@@ -31,7 +31,7 @@ exports.create = async (req, res) => {
 			order_id: data.order_id,
 			name: data.name,
 			pay_price: data.pay_price,
-			left_price: data.left_price,
+			// left_price: data.left_price,
 			pay_date: data.pay_date,
 			change_date: data.change_date,
 			description: data.description || "",
