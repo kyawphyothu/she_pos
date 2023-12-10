@@ -12,7 +12,7 @@ const PrintTableBorrow = forwardRef((props, ref) => {
 		<div ref={ref} style={styles.main}>
 			<div style={{ textAlign: "center" }}>
 				<img src={logo} style={{ borderRadius: "50%", width: "50px" }} />
-				<Typography variant='subtitle1' sx={{ fontWeight: "600" }}>သျှီ အခမ်းအနား</Typography>
+				<Typography variant='subtitle1' sx={{ fontWeight: "600" }}>သျှီ မိသားစု</Typography>
 			</div>
 
 			<Typography variant='subtitle2'>အမည်: {formData.name}</Typography>
