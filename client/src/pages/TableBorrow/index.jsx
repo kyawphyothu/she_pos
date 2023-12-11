@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, IconButton, Radio, RadioGroup, TextField } from '@mui/material';
+import { Box, Button, Divider, FormControl, FormControlLabel, Grid, IconButton, Radio, RadioGroup, Stack, TextField } from '@mui/material';
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
@@ -8,7 +8,7 @@ import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import AddIcon from '@mui/icons-material/Add';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
-import data from './data';
+import { tableChairSet, plates } from './data';
 import PrintTableBorrow from '../../components/PrintTableBorrow';
 import { useReactToPrint } from 'react-to-print';
 
@@ -17,37 +17,42 @@ export default function TableBorrow() {
 	const initialFormData = {
 		name: "",
 		date: currentDate.getDate() + "-" + (currentDate.getMonth()+1) + "-" + currentDate.getFullYear(),
-		price: "",
 		paidPrice: ""
 	};
 
-	const [isCreateStage, setIsCreateStage] = useState(true);
-	const [formFields, setFormFields] = useState([{ id: 1, name: '', count: 0 }]);
-	const [pay, setPay] = useState("no_paid") //paid, no_paid, half_paid
+	const [stage, setStage] = useState(1);
+	const [formFields, setFormFields] = useState([{ id: 1, name: '', count: 0, rate: 0 }]);
+	const [pay, setPay] = useState("no_paid") //paid, no_paid, half_paid, none
 	const [formData, setFormData] = useState(initialFormData);
 
 	const tablesRef = useRef();
+	const platesRef = useRef();
 	const printRef = useRef();
 
-	const handleCreate = (value) => {
-		if(value === "blank"){
-			setIsCreateStage(false);
-		}else{
-			let j = 2;
-			Object.keys(data).map((i) => {
-				addFormField({ id: j, name: i, count: Math.ceil(data[i]*value) });
-				j++;
-			});
-
-			setIsCreateStage(false);
+	const handleCreate = (value, VoucherType) => {
+		if (value === "blank") {
+			setStage(2);
+			return;
 		}
-	}
 
-	const addFormField = ({id=formFields[formFields.length - 1].id + 1 ,name="", count=0}) => {
+		const data = VoucherType === "table" ? tableChairSet : VoucherType === "plate" ? plates : [];
+
+		let j = 2;
+		data.forEach((i) => {
+			const count = typeof i.count === 'number' ? Math.ceil(i.count * value) : i.count;
+			addFormField({ id: j, name: i.mmname, count, rate: i.rate });
+			j++;
+		});
+
+		setStage(2);
+	};
+
+	const addFormField = ({id=formFields[formFields.length - 1].id + 1 ,name="", count=0, rate=0}) => {
 		const newField = {
 			id,
 			name,
 			count,
+			rate,
 		};
 		setFormFields((prev) => [...prev, newField]);
 	};
@@ -64,6 +69,12 @@ export default function TableBorrow() {
 	const handleCountChange = (id, value) => {
 		const updatedFields = formFields.map(field =>
 			field.id === id ? { ...field, count: value } : field
+		);
+		setFormFields(updatedFields);
+	};
+	const handleRateChange = (id, value) => {
+		const updatedFields = formFields.map(field =>
+			field.id === id ? { ...field, rate: value } : field
 		);
 		setFormFields(updatedFields);
 	};
@@ -85,24 +96,6 @@ export default function TableBorrow() {
 		setPay(e.target.value);
 	}
 
-	// const handlePrint = () => {
-	// 	const name = nameRef.current.value;
-	// 	const date = dateRef.current.value;
-	// 	const price = priceRef.current.value;
-	// 	const paidPrice = paidPriceRef.current.value;
-
-	// 	const data = {
-	// 		name,
-	// 		date,
-	// 		price,
-	// 		paidPrice,
-	// 		pay,
-	// 		formFields
-	// 	}
-
-	// 	console.log(data)
-	// }
-
 	const handlePrint = useReactToPrint({
 		content: () => printRef.current,
 	});
@@ -110,12 +103,12 @@ export default function TableBorrow() {
 	return (
 		<>
 			{
-				isCreateStage ? (
+				stage===1 ? (
 					<>
 						<Grid container spacing={1}>
 							<Grid item xs={9}>
 								<TextField
-									label="ပွဲရံ"
+									label="ကျသင့်ငွေ ဘောင်ချာ"
 									size='small'
 									defaultValue={10}
 									inputRef={tablesRef}
@@ -123,14 +116,29 @@ export default function TableBorrow() {
 								/>
 							</Grid>
 							<Grid item xs={3}>
-								<Button variant='contained' fullWidth onClick={() => handleCreate(+tablesRef.current.value)}>create</Button>
+								<Button variant='contained' fullWidth onClick={() => handleCreate(+tablesRef.current.value, 'table')}>create</Button>
+							</Grid>
+							<Grid item xs={12}>
+								<Divider variant="middle">OR</Divider>
+							</Grid>
+							<Grid item xs={9}>
+								<TextField
+									label="ပန်းကန် ပွဲရံ"
+									size='small'
+									defaultValue={50}
+									inputRef={platesRef}
+									fullWidth
+								/>
+							</Grid>
+							<Grid item xs={3}>
+								<Button variant='contained' fullWidth onClick={() => handleCreate(+platesRef.current.value, 'plate')}>create</Button>
 							</Grid>
 							<Grid item xs={12} mt={2}>
 								<Button variant='outlined' color='secondary' fullWidth onClick={() => handleCreate("blank")}>+Blank</Button>
 							</Grid>
 						</Grid>
 					</>
-				):(
+				) : stage===2 ? (
 					<>
 						<div style={{ display: "none" }}>
 							<PrintTableBorrow
@@ -156,7 +164,6 @@ export default function TableBorrow() {
 										label={"နေ့ရက်"}
 										defaultValue={dayjs(new Date())}
 										format={"DD/MM/YYYY"}
-										// inputRef={dateRef}
 										onAccept={(nVal) => setFormData((prev) => ({...prev, date: `${nVal.$D}-${nVal.$M + 1}-${nVal.$y}`}))}
 										slotProps={{
 											textField: {
@@ -166,15 +173,6 @@ export default function TableBorrow() {
 										}}
 									/>
 								</LocalizationProvider>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									label="ကျသင့်ငွေ"
-									size='small'
-									type='number'
-									fullWidth
-									onChange={(e) => setFormData((prev) => ({...prev, price: e.target.value}))}
-								/>
 							</Grid>
 							<Grid item xs={12}>
 								<FormControl>
@@ -188,6 +186,7 @@ export default function TableBorrow() {
 										<FormControlLabel value="paid" control={<Radio />} label="ရှင်းပြီး" />
 										<FormControlLabel value="half_paid" control={<Radio />} label="စရံ" />
 										<FormControlLabel value="no_paid" control={<Radio />} label="မရှင်းရသေး" />
+										<FormControlLabel value="none" control={<Radio />} label="n" color='success' />
 									</RadioGroup>
 								</FormControl>
 							</Grid>
@@ -203,7 +202,7 @@ export default function TableBorrow() {
 							{
 								formFields.map(field => (
 									<Grid item xs={12} key={field.id} display={"flex"}>
-										<Box sx={{ width: "52%" }} display={"flex"} mr={2}>
+										<Box sx={{ width: "55%", alignItems: "flex-start" }} display={"flex"} mr={2}>
 											<IconButton color='error' onClick={() => removeFormField(field.id)}><RemoveCircleIcon /></IconButton>
 											<TextField
 												type="text"
@@ -213,16 +212,41 @@ export default function TableBorrow() {
 												sx={{ flex:1 }}
 											/>
 										</Box>
-										<Box sx={{ width: "46%" }} display={"flex"}>
-											<IconButton color='error' onClick={() => handleMinusCount(field.id)}><IndeterminateCheckBoxIcon /></IconButton>
-											<TextField
-												type='number'
-												size='small'
-												value={field.count}
-												onChange={(e) => handleCountChange(field.id, e.target.value)}
-												sx={{ flex:1 }}
-											/>
-											<IconButton color='success' onClick={() => handlePlusCount(field.id)}><AddBoxIcon /></IconButton>
+										<Box sx={{ width: "43%" }} display={"flex"}>
+											<Stack
+												direction="column"
+												justifyContent="center"
+												alignItems="center"
+												spacing={2}
+											>
+												<div style={{ display: "flex" }}>
+													<IconButton color='error' onClick={() => handleMinusCount(field.id)} sx={{ alignItems: "flex-start" }}><IndeterminateCheckBoxIcon /></IconButton>
+													<TextField
+														type='number'
+														size='small'
+														value={field.count}
+														onChange={(e) => handleCountChange(field.id, e.target.value)}
+														sx={{
+															flex:1,
+														}}
+													/>
+													<IconButton color='success' onClick={() => handlePlusCount(field.id)} sx={{ alignItems: "flex-start" }}><AddBoxIcon /></IconButton>
+												</div>
+												<div style={{ display: "flex" }}>
+													{/* <IconButton color='error' onClick={() => handleMinusCount(field.id)} sx={{ alignItems: "flex-start" }}><IndeterminateCheckBoxIcon /></IconButton> */}
+													<TextField
+														type='number'
+														size='small'
+														variant="standard"
+														value={field.rate}
+														onChange={(e) => handleRateChange(field.id, e.target.value)}
+														sx={{
+															flex:1,
+														}}
+													/>
+													{/* <IconButton color='success' onClick={() => handlePlusCount(field.id)} sx={{ alignItems: "flex-start" }}><AddBoxIcon /></IconButton> */}
+												</div>
+											</Stack>
 										</Box>
 									</Grid>
 								))
@@ -230,11 +254,13 @@ export default function TableBorrow() {
 							<Grid item xs={12}>
 								<Button variant='outlined' fullWidth onClick={addFormField}><AddIcon /></Button>
 							</Grid>
-							<Grid item xs={12} mt={2}>
+							<Grid item xs={12} my={3}>
 								<Button variant='contained' fullWidth onClick={handlePrint}><LocalPrintshopIcon /></Button>
 							</Grid>
 						</Grid>
 					</>
+				) : (
+					<></>
 				)
 			}
 		</>
