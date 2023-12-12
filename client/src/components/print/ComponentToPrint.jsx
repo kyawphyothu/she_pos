@@ -19,7 +19,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 			<div style={{ textAlign: "center" }}>
 				<img src={logo} style={{ borderRadius: "50%", width: "50px" }} />
 				<Typography variant='subtitle1' sx={{ fontWeight: "600" }}>သျှီ မိသားစု</Typography>
-				<Typography variant='body2' sx={{ fontWeight: "400" }}>09-427208035, 09-444005537, 09-772863069</Typography>
+				<Typography variant='body2' sx={{ fontWeight: "400" }} mb={2}>09-427208035, 09-444005537, 09-772863069</Typography>
 			</div>
 
 			<Stack>
