@@ -1,6 +1,6 @@
-import { Autocomplete, Box, Button, Dialog, Divider, Grid, Stack, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Button, Dialog, Divider, Grid, Pagination, Skeleton, Stack, TextField, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
-import { unstable_HistoryRouter, useNavigate, useSearchParams } from 'react-router-dom'
+import { unstable_HistoryRouter, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import GetMMDate from '../helper/GetMMDate';
 import NumChangeEngToMM from '../helper/NumChangeEngToMM';
@@ -16,14 +16,18 @@ import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 
 export default function Search() {
 	const navigate = useNavigate();
-	const [searchParams, setSearchParams] = useSearchParams()
+	const [searchParams, setSearchParams] = useSearchParams({})
 
 	const [openFilterDialog, setOpenFilterDialog] = useState(false);
 	const [openCameraDialog, setOpenCameraDialog] = useState(false);
 	const [villages, setVillages] = useState([]);
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 	const [orders, setOrders] = useState([]);
+	const [totalOrders, setTotalOrders] = useState(0);
 	const [searchText, setSearchText] = useState(searchParams.get("q"));
+	const [currentPage, setCurrentPage] = useState(+searchParams.get("page") || 1);
+
+	const limit = 3;
 
 	const handleBarcodeDetected = (code) => {
 		setSearchText(code)
@@ -68,14 +72,15 @@ export default function Search() {
 	});
 
 	const handleSearch = async () => {
-		const nameOrCode = searchText;
-		if(!nameOrCode) return;
+		const nameOrCode = searchText || "";
+		// if(!nameOrCode) return;
 		setIsLoadingBtn(true);
 
-		const res = await searchOrder(nameOrCode);
+		const res = await searchOrder(window.location.search);
 		setIsLoadingBtn(false);
 		if(res.ok){
-			setOrders(res);
+			setOrders(res.result);
+			setTotalOrders(res.countTotal)
 		}
 	}
 
@@ -84,26 +89,48 @@ export default function Search() {
 		navigate(`/detail/${id}`);
 	}
 
+	const getSearchQueries = () => {
+		const searchParams = new URLSearchParams(window.location.search);
+
+		// Create an object to store query parameters
+		const queryParams = {};
+
+		// Iterate over the search parameters and populate the object
+		for (const [key, value] of searchParams) {
+		queryParams[key] = value;
+		}
+
+		return queryParams;
+	}
+	const setSearchQueries = (newParam) => {
+		const existingParams = getSearchQueries();
+		setSearchParams({...existingParams, ...newParam});
+	}
+
 	useEffect(() => {
 		const fetchVillages = async () => {
 			const result = await getAllvillages();
 			if(!result.ok) return;
 			setVillages(result);
 		}
-		const fetchTodayOrder = async () => {
-			if(searchText) return;
-			const result = await getTodayOrder();
-			setOrders(result)
-		}
+		// const fetchTodayOrder = async () => {
+		// 	if(searchText) return;
+		// 	const result = await getTodayOrder();
+		// 	setOrders(result)
+		// }
 
 		fetchVillages();
 		handleSearch();
-		fetchTodayOrder();
+		// fetchTodayOrder();
 	}, [])
 
 	useEffect(() => {
 		handleSearch();
 	}, [searchParams])
+
+	useEffect(() => {
+		setSearchQueries({page: currentPage, limit})
+	}, [currentPage])
 
 	return (
 		<>
@@ -134,12 +161,39 @@ export default function Search() {
 					<TuneRoundedIcon />
 				</Button> */}
 			</Stack>
-			<LoadingButton loading={isLoadingBtn} variant='contained' fullWidth onClick={() => setSearchParams({q: searchText})}>search</LoadingButton>
+			<LoadingButton
+				loading={isLoadingBtn}
+				variant='contained'
+				fullWidth
+				onClick={() => {
+					searchText && setSearchQueries({q: searchText});
+					setCurrentPage(1);
+				}}>
+				search
+			</LoadingButton>
 
 			{/* search result */}
 			<Grid container spacing={3} mt={2}>
 				{
-					orders.length ? (
+					isLoadingBtn ? (
+						[1,2,3].map((i) => {
+							return (
+								<Grid item xs={12} key={i}>
+									<Box className="floatingCard" sx={{ borderRadius: "0.1rem", mb: 2 }}>
+										<Stack>
+											<Skeleton height={20} width={"60%"} />
+											<Skeleton height={20} width={"30%"} />
+											<Skeleton height={20} width={"20%"} />
+											<Skeleton height={20} width={"75%"} />
+											<Skeleton height={20} width={"90%"} />
+											<Skeleton height={20} width={"6%"} />
+											<Skeleton height={50} />
+										</Stack>
+									</Box>
+								</Grid>
+							)
+						})
+					) : orders.length && !isLoadingBtn ? (
 						orders.map((order) => {
 							return (
 								<Grid item xs={12} key={order.id}>
@@ -180,6 +234,10 @@ export default function Search() {
 						</Grid>
 					)
 				}
+
+				<Grid item xs={12} mb={6} display={"flex"} justifyContent={"center"}>
+					<Pagination count={Math.ceil(totalOrders/limit)} page={currentPage} onChange={(e, p) => setCurrentPage(p)} variant="outlined" shape="rounded" />
+				</Grid>
 			</Grid>
 
 			{/* filter dialog */}

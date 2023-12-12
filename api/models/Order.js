@@ -1,18 +1,37 @@
 const db = require("../config/db")
 
 class Order{
-	static async getOrdersByNameCode(string){
-		string = `%${string}%`;
-		const query = `SELECT orders.id, orders.name, orders.phone, orders.gold, orders.weight, orders.date, orders.redeem, pawns.price, acceptors.name as acceptor, villages.name as village
-			FROM orders
+	static async getOrdersByNameCode(isCountQuery, searchString, villageId, page, limit){
+		searchString = `%${searchString}%`;
+		const params = [searchString, searchString];
+		let query;
+
+		if (isCountQuery) {
+			query = `SELECT count(orders.id) as total`;
+		} else {
+			query = `SELECT orders.id, orders.name, orders.phone, orders.gold, orders.weight, orders.date, orders.redeem, pawns.price, acceptors.name as acceptor, villages.name as village`;
+		}
+
+		query += ` FROM orders
 			LEFT JOIN pawns ON pawns.order_id=orders.id
 			LEFT JOIN acceptors ON acceptors.id=orders.acceptor_id
 			LEFT JOIN villages ON villages.id=orders.village_id
-			WHERE orders.name LIKE ? OR orders.code LIKE ?
-			ORDER BY date desc`
+			WHERE orders.name LIKE ? OR orders.code LIKE ?`
 		;
 
-		const [result, fileds] = await db.query(query, [string, string])
+		if(villageId !== "all"){
+			query += ` AND village_id in (?)`;
+			params.push(villageId);
+		}
+
+		query += ` ORDER BY orders.date desc`;
+
+		if (!isCountQuery) {
+			query += ` LIMIT ?,?`;
+			params.push((page - 1) * limit, limit);
+		}
+
+		const [result, fileds] = await db.query(query, params)
 
 		return result;
 	}
