@@ -46,6 +46,12 @@ export const tableChairSet = [
 		mmname: "ထိုင်ခုံစွပ်",
 		rate: 250,
 	},
+	{
+		name: "plate_sets",
+		count: 4,
+		mmname: "ပန်းကန်ပွဲရံ",
+		rate: 2000,
+	},
 ]
 
 export const plates = [
