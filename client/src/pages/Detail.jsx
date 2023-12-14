@@ -32,11 +32,12 @@ export default function Detail() {
 	});
 
 	const handleClickBckBtn = () => {
-		if(q===null || q==="null"){
-			navigate(`/search`);
-		}else{
-			navigate(`/search?q=${q}`)
-		}
+		navigate(-1)
+		// if(q===null || q==="null"){
+		// 	navigate(`/search`);
+		// }else{
+		// 	navigate(`/search?q=${q}`)
+		// }
 	}
 
 	const toggleDateLang = () => {

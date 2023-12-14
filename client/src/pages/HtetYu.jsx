@@ -1,6 +1,6 @@
 import { Box, Grid, IconButton, LinearProgress, TextField, Typography } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { redirect, useNavigate, useParams } from 'react-router-dom'
 import CustomBadge from '../components/CustomBudge';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import NumChangeEngToMM from '../helper/NumChangeEngToMM';
@@ -80,7 +80,7 @@ export default function HtetYu() {
 		const result = await createHtetYu(data);
 		if(result.ok){
 			snackNoti({type: "success", msg: result.msg});
-			navigate(`/detail/${id}`);
+			navigate(-1);
 		} else {
 			snackNoti({type: "error", msg: result.err});
 		}

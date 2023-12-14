@@ -70,7 +70,7 @@ export default function PayInterest() {
 		const res = await createPayInterest(data);
 		if(res.ok){
 			snackNoti({type: "success", msg: res.msg});
-			navigate(`/detail/${id}`)
+			navigate(-1)
 		} else {
 			snackNoti({type: "error", msg: res.err});
 		}
