@@ -23,34 +23,32 @@ const ComponentToPrint = forwardRef((props, ref) => {
 			</div>
 
 			<Stack>
-				<Typography variant='subtitle2'>{order.name}</Typography>
-				<Typography variant='body2'>{FormatCode(order.code)}</Typography>
-				<Typography variant='body2'>{order.village}</Typography>
-				<Typography variant='body2'>{order.phone}</Typography>
-				<Typography variant='body2'>{order.gold}</Typography>
+				{/* <Typography variant='subtitle2'>{order.name}</Typography> */}
+				{/* <Typography variant='body2'>{FormatCode(order.code)}</Typography> */}
+				<Typography variant='body2'>နေရပ်: {order.village}</Typography>
+				<Typography variant='body2'>ဖုန်း: {order.phone}</Typography>
+				{/* <Typography variant='body2'>{order.gold}</Typography>
 				<Typography variant='body2'>{CalculateWeight(order.weight)}</Typography>
-				<Typography variant='body2'>{GetMMDate(new Date(order.date))}</Typography>
-				<span>
-					<CustomBadge>{order.acceptor === 'အိမ်' ? 'h' :
+				<Typography variant='body2'>{GetMMDate(new Date(order.date))}</Typography> */}
+				<span style={{ display: "flex" }}>
+					<Typography variant='body2'>{order.acceptor === 'အိမ်' ? 'h' :
 						order.acceptor === 'အေးအေးခိုင်' ? 'kk' :
 						order.acceptor === 'စန်းစန်းထွေး' ? 'ss' :
 						order.acceptor === 'ဥမ္မာဝင်း' ? 'ww' :
 						order.acceptor}
-					</CustomBadge>
+					</Typography>
 					{
 						Boolean(order.redeem) && (
-							<CustomBadge color='error'>ရွေးပြီး</CustomBadge>
+							<Typography variant='body2' sx={{ fontWeight: "600" }}>-(ရွေးပြီး)</Typography>
 						)
 					}
 				</span>
 			</Stack>
 
 
-			<Grid container rowGap={3} mb={3}>
+			<Grid container rowGap={3} mb={3} mt={2}>
 				<Grid item xs={12}>
-					<Divider sx={{ color: "red" }}>
-						<Chip color='primary' label="မှတ်တမ်းများ" />
-					</Divider>
+					<hr style={{ borderTop: "2px dashed #000", width: "80%" }} />
 				</Grid>
 				{histories.length &&
 					histories.map((history) => {
