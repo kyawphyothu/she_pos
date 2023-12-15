@@ -13,6 +13,7 @@ import { getHistoryByOrderId, getOrderById } from '../apiCalls';
 import CalculateWeight from '../helper/CalculateWeight';
 import FormatCode from '../helper/FormetCode';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
+import { LoadingButton } from '@mui/lab';
 
 export default function Detail() {
 	const { id } = useParams();
@@ -22,6 +23,7 @@ export default function Detail() {
 	const [histories, setHistories] = useState([]);
 	const [isFetching, setIsFetching] = useState(true);
 	const [dateLang, setDateLang] = useState("mm");
+	const [isPrinting, setIsPrinting] = useState(false);
 
 	const printRef = useRef();
 
@@ -29,6 +31,8 @@ export default function Detail() {
 
 	const handlePrint = useReactToPrint({
 		content: () => printRef.current,
+		onBeforeGetContent: () => setIsPrinting(true),
+		onAfterPrint: () => setIsPrinting(false),
 	});
 
 	const handleClickBckBtn = () => {
@@ -79,7 +83,13 @@ export default function Detail() {
 								<ArrowBackRoundedIcon />
 							</IconButton>
 							<IconButton sx={{ color: orange[400] }} onClick={handlePrint}>
-								<PrintRoundedIcon  />
+								{
+									isPrinting ? (
+										<LoadingButton loading></LoadingButton>
+									) : (
+										<PrintRoundedIcon  />
+									)
+								}
 							</IconButton>
 							<div style={{ display: "none" }}>
 								<ComponentToPrint ref={printRef} order={order} histories={histories} />
@@ -103,6 +113,23 @@ export default function Detail() {
 									}
 									<IconButton color='warning' onClick={toggleDateLang}><ChangeCircleIcon /></IconButton>
 								</Typography>
+								{/* <span style={{ marginBottom: "8px" }}>
+									{
+										order.album_id ? (
+											<Chip
+												label={order.album_name}
+												onClick={() => navigate(`/album/${order.album_id}`)}
+												onDelete={() => {}}
+											/>
+										) : (
+											<Chip
+												label="+ Album"
+												variant='outlined'
+												onClick={() => {}}
+											/>
+										)
+									}
+								</span> */}
 								<span>
 									<CustomBadge>{order.acceptor}</CustomBadge>
 									{
