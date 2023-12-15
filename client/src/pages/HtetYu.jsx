@@ -77,6 +77,8 @@ export default function HtetYu() {
 			return;
 		}
 
+		setIsLoadingBtn(true);
+
 		const result = await createHtetYu(data);
 		if(result.ok){
 			snackNoti({type: "success", msg: result.msg});
@@ -84,6 +86,8 @@ export default function HtetYu() {
 		} else {
 			snackNoti({type: "error", msg: result.err});
 		}
+
+		setIsLoadingBtn(false);
 
 	}
 

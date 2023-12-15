@@ -22,6 +22,7 @@ export default function Redeem() {
 	const [order, setOrder] = useState({});
 	const [formData, setFormData] = useState({order_id: "", name: "", price: "", pay_price: "", left_Price: "", take_gold: "", left_gold: "", weight: "", date: "", description: ""});
 	const [MMDate, setMMDate] = useState(GetMMDate(new Date()));
+	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 
 	const kRef = useRef(0);	//ကျပ်
 	const pRef = useRef(0);	//ပဲ
@@ -75,6 +76,8 @@ export default function Redeem() {
 				return;
 			}
 
+			setIsLoadingBtn(true);
+
 			const result = await createHalfRedeem(data);
 			if(result.ok){
 				snackNoti({type: "success", msg: result.msg});
@@ -85,6 +88,8 @@ export default function Redeem() {
 		} else {
 			data.price = formData.price;
 
+			setIsLoadingBtn(true);
+
 			const result = await createRedeem(data);
 			if(result.ok){
 				snackNoti({type: "success", msg: result.msg});
@@ -93,6 +98,8 @@ export default function Redeem() {
 				snackNoti({type: "error", msg: result.err})
 			}
 		}
+
+		setIsLoadingBtn(false);
 	}
 
 	useEffect(() => {
@@ -273,7 +280,7 @@ export default function Redeem() {
 									/>
 								</Grid>
 								<Grid item xs={12}>
-									<LoadingButton variant='contained' sx={{ mr: 1 }} type='submit'>save</LoadingButton>
+									<LoadingButton loading={isLoadingBtn} variant='contained' sx={{ mr: 1 }} type='submit'>save</LoadingButton>
 								</Grid>
 							</Grid>
 						</form>

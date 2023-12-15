@@ -21,6 +21,7 @@ export default function PayInterest() {
 	const [order, setOrder] = useState({});
 	const [formData, setFormData] = useState({order_id: 0, name: "", pay_price: 0, pay_date: "", change_date: "", description: ""});
 	const [MMDate, setMMDate] = useState({pay: GetMMDate(new Date()), change: ""})
+	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 
 	const paydateRef = useRef();
 	const changedateRef = useRef();
@@ -67,6 +68,8 @@ export default function PayInterest() {
 		// Create a new date string in "YYYY-MM-DD" format
 		data.change_date = outputChangeDate;
 
+		setIsLoadingBtn(true);
+
 		const res = await createPayInterest(data);
 		if(res.ok){
 			snackNoti({type: "success", msg: res.msg});
@@ -74,6 +77,8 @@ export default function PayInterest() {
 		} else {
 			snackNoti({type: "error", msg: res.err});
 		}
+
+		setIsLoadingBtn(false);
 	}
 
 	useEffect(() => {
@@ -208,7 +213,7 @@ export default function PayInterest() {
 									/>
 								</Grid>
 								<Grid item xs={12}>
-									<LoadingButton variant='contained' sx={{ mr: 1 }} type='submit'>save</LoadingButton>
+									<LoadingButton loading={isLoadingBtn} variant='contained' sx={{ mr: 1 }} type='submit'>save</LoadingButton>
 								</Grid>
 							</Grid>
 						</form>

@@ -21,6 +21,7 @@ export default function Add() {
 	const [formData, setFormData] = useState({name: "", village_id: 0, phone: "", gold: "", weight: 0, price: 0, date: "", acceptor_id: 1, description: ""})
 	const [error, setError] = useState({name: 0, village_id: 0, gold: 0, weight: 0, price: 0, date: 0})
 	const [MMdate, setMMDate] = useState(GetMMDate(new Date()));
+	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 
 	const kRef = useRef();	//ကျပ်
 	const pRef = useRef();	//ပဲ
@@ -82,6 +83,8 @@ export default function Add() {
 			return;
 		}
 
+		setIsLoadingBtn(true);
+
 		const res = await createPawn(data);
 		if(res.ok){
 			snackNoti({type: "success", msg: res.msg});
@@ -96,6 +99,8 @@ export default function Add() {
 
 			snackNoti({type: "error", msg: res.err})
 		}
+
+		setIsLoadingBtn(false);
 
 	}
 
@@ -269,8 +274,8 @@ export default function Add() {
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<LoadingButton variant='outlined' sx={{ mr:2 }} type='submit' onClick={() => setSaveType("save")}>save</LoadingButton>
-						<LoadingButton variant='contained' type='submit' onClick={() => setSaveType("saveandprint")}>save & print</LoadingButton>
+						<LoadingButton loading={isLoadingBtn} variant='outlined' sx={{ mr:2 }} type='submit' onClick={() => setSaveType("save")}>save</LoadingButton>
+						<LoadingButton loading={isLoadingBtn} variant='contained' type='submit' onClick={() => setSaveType("saveandprint")}>save & print</LoadingButton>
 					</Grid>
 				</Grid>
 			</form>
