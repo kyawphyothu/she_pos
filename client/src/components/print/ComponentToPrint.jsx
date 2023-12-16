@@ -19,7 +19,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 			<div style={{ textAlign: "center" }}>
 				<img src={logo} style={{ borderRadius: "50%", width: "50px" }} />
 				<Typography variant='subtitle1' sx={{ fontWeight: "600" }}>သျှီ မိသားစု</Typography>
-				<Typography variant='body2' sx={{ fontWeight: "400" }} mb={2}>09-427208035, 09-444005537, 09-772863069</Typography>
+				<Typography variant='body2' sx={{ fontWeight: "400" }} mb={2}>09-427208035, 09-444005537, 09-772863069, 09-977636543</Typography>
 			</div>
 
 			<Stack>
@@ -149,6 +149,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 				<Grid item textAlign={"center"} xs={12}>
 					<hr style={{ width: "80%", border: "none", borderTop: "2px dashed #000" }} />
 					<Typography variant='body2'>ဤဘောင်ချာဖြင့် ပြန်ရွေးပါ</Typography>
+					<Typography variant='body2'>၆လကျော်သော ပစ္စည်းများ တာဝန်မယူပါ</Typography>
 					<Typography variant='body2'>ဘောင်ချာ ပျောက်ဆုံး ပျက်စီးပါက တာဝန်မယူပါ</Typography>
 					<Typography variant='body2'>01-01-2024 မှစ၍ ဘောင်ချာစနစ်သို့ ပြောင်းလဲထားသည်</Typography>
 				</Grid>
