@@ -29,6 +29,7 @@ export default function Detail() {
 	const [albums, setAlbums] = useState([]);
 	const [openAlbumDialog, setOpenAlbumDialog] = useState(false);
 	const [selectedAlbum, setSelectedAlbum] = useState({});
+	cosnt [isLoadingAlbumAddDialogBtn, setIsLoadingAlbumAddDialogBtn] = useState(false);
 
 	const printRef = useRef();
 
@@ -63,6 +64,8 @@ export default function Detail() {
 	const handleSubmitAlbum = async () => {
 		if(!selectedAlbum) return snackNoti({msg: "Album တစ်ခုရွေးပါ", type: "warning"});
 
+		setIsLoadingAlbumAddDialogBtn(true);
+
 		const result = await createOrderAlbum({order_id: id, album_id: selectedAlbum.id});
 		if(result.ok){
 			snackNoti({msg: "Album ထဲသို့ ထည့်သွင်းပြီးပါပြီ", type: "success"});
@@ -72,6 +75,8 @@ export default function Detail() {
 		}else{
 			snackNoti({msg: result.err, type: "error"});
 		}
+
+		setIsLoadingAlbumAddDialogBtn(true);
 	}
 	const handleRemoveAlbum = async () => {
 		const result = await deleteOrderAlbum(order.order_album_id);
@@ -338,8 +343,8 @@ export default function Detail() {
 								/>
 							</DialogContent>
 							<DialogActions>
-								<LoadingButton onClick={handleCloseAlbumDialog}>cancle</LoadingButton>
-								<LoadingButton onClick={handleSubmitAlbum} variant='contained'>save</LoadingButton>
+								<LoadingButton loading={isLoadingAlbumAddDialogBtn} onClick={handleCloseAlbumDialog}>cancle</LoadingButton>
+								<LoadingButton loading={isLoadingAlbumAddDialogBtn} onClick={handleSubmitAlbum} variant='contained'>save</LoadingButton>
 							</DialogActions>
 						</Dialog>
 					</>
