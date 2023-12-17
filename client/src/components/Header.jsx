@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
 import { AppContext } from '../AppContextProvider';
+import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
 
 const StyledFab = styled(Fab)({
 	position: 'absolute',
@@ -184,9 +185,14 @@ export default function Header() {
 									<AddIcon />
 								</StyledFab>
 							</Grid>
-							<Grid item xs={5} sx={{ display: "flex", justifyContent: "center" }}>
+							<Grid item xs={3} sx={{ display: "flex", justifyContent: "center" }}>
 								<IconButton color="inherit" onClick={() => navigate("/search")}>
 									<SearchIcon />
+								</IconButton>
+							</Grid>
+							<Grid item xs={2} sx={{ display: "flex", justifyContent: "center" }}>
+								<IconButton color="inherit" onClick={() => navigate("/albums")}>
+									<FolderCopyOutlinedIcon />
 								</IconButton>
 							</Grid>
 						</Grid>
