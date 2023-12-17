@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config({
-	path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development'
+//	path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development'
 });
 const { createDbConnection } = require("./config/db")
 const AuthRoutes = require('./routes/AuthRoutes');
@@ -23,8 +23,9 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({origin: "*"}));
 
+app.get("/", (req, res) => {res.send("hello")})
 // login signup routes
 app.use("/auth", AuthRoutes)
 
