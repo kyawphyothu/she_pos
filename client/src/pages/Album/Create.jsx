@@ -17,6 +17,8 @@ export default function Create() {
 	const handleSubmit = async () => {
 		const name = nameRef.current.value;
 
+		setIsLoadingBtn(true)
+
 		const result = await createAlbum({ name });
 		if(result.ok){
 			snackNoti({ msg: "Album create success", type: "success" })
@@ -25,6 +27,8 @@ export default function Create() {
 			console.log(result)
 			snackNoti({ msg: result.err, type: "error" })
 		}
+
+		setIsLoadingBtn(false)
 	}
 
 	return (

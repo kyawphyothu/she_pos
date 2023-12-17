@@ -48,10 +48,11 @@ export default function Detail() {
 			snackNoti({msg: "update success", type: "success"})
 
 			handleCloseEditDialog();
-			setIsLoadingUpdateFormBtn(false);
 		} else {
 			snackNoti({msg: result.err, type: "error"})
 		}
+
+		setIsLoadingUpdateFormBtn(false);
 	}
 
 	const handleCloseDeleteConfirmDialog = () => {
@@ -63,11 +64,12 @@ export default function Detail() {
 		const result = await deleteAlbum(id);
 		if(result.ok){
 			snackNoti({msg: "delete album success", type: "success"})
-			setIsLoadingDeleteConfirmBtn(false)
 			navigate(`/albums`);
 		}else{
 			snackNoti({msg: result.err, type: "error"})
 		}
+
+		setIsLoadingDeleteConfirmBtn(false)
 	}
 
 	useEffect(() => {
