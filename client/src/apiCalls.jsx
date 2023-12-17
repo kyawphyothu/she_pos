@@ -179,3 +179,28 @@ export async function createHalfRedeem(data) {
 export async function createRedeem(data) {
 	return makeApiRequest(`/redeem`, "POST", {data});
 }
+
+
+//------------------------------------------album------------------------------
+export async function getAllAlbums() {
+	return makeApiRequest(`/album`, "GET");
+}
+export async function getOrdersByAlbumId(id) {
+	return makeApiRequest(`/album/${id}`, "GET");
+}
+export async function createAlbum(data) {
+	return makeApiRequest(`/album`, "POST", {data});
+}
+export async function updateAlbum(id, data) {
+	return makeApiRequest(`/album/${id}`, "PUT", {data});
+}
+export async function deleteAlbum(id) {
+	return makeApiRequest(`/album/${id}`, "DELETE");
+}
+//------------------------------------------order_album------------------------------
+export async function createOrderAlbum(data) {
+	return makeApiRequest(`/order_album`, "POST", {data});
+}
+export async function deleteOrderAlbum(id) {
+	return makeApiRequest(`/order_album/${id}`, "DELETE");
+}

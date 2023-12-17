@@ -15,6 +15,8 @@ const HtetYuRoutes = require('./routes/HtetYuRoutes');
 const HalfRedeemRoutes = require('./routes/HalfRedeemRoutes');
 const RedeemRoutes = require('./routes/RedeemRoutes');
 const OrderRoutes = require('./routes/OrderRoutes');
+const AlbumRoutes = require('./routes/AlbumRoutes');
+const OrderAlbumRoutes = require('./routes/OrderAlbumRoutes');
 const Authenticate = require("./middleware/Autenticate");
 
 const app = express();
@@ -39,6 +41,8 @@ app.use("/htet_yu", HtetYuRoutes)
 app.use("/half_redeem", HalfRedeemRoutes)
 app.use("/redeem", RedeemRoutes)
 app.use("/order", OrderRoutes)
+app.use("/album", AlbumRoutes)
+app.use("/order_album", OrderAlbumRoutes)
 
 app.listen(process.env.PORT, () => {
 	console.log(`server is running in port ${process.env.PORT}`)

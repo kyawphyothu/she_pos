@@ -1,4 +1,7 @@
 import Add from "../pages/Add";
+import Album from "../pages/Album";
+import AlbumDetail from "../pages/Album/Detail";
+import AlbumCreate from "../pages/Album/Create";
 import Detail from "../pages/Detail";
 import Home from "../pages/Home";
 import HtetYu from "../pages/HtetYu";
@@ -39,6 +42,18 @@ const UserRoutes = [
 	{
 		path: "/table_borrow",
 		element: <TableBorrow />,
+	},
+	{
+		path: "/albums",
+		element: <Album />,
+	},
+	{
+		path: "/album/:id",
+		element: <AlbumDetail />,
+	},
+	{
+		path: "/album/create",
+		element: <AlbumCreate />,
 	},
 ];
 

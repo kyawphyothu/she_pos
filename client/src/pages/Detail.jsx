@@ -1,6 +1,6 @@
-import { Box, Button, ButtonGroup, Chip, Divider, Grid, IconButton, LinearProgress, Stack, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, ButtonGroup, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, LinearProgress, Stack, TextField, Typography } from '@mui/material';
 import { amber, blue, cyan, green, grey, indigo, lightBlue, orange, pink, purple, red, teal } from '@mui/material/colors';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import CustomBadge from '../components/CustomBudge';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
@@ -9,14 +9,16 @@ import GetMMDate from '../helper/GetMMDate';
 import NumChangeEngToMM from '../helper/NumChangeEngToMM';
 import ComponentToPrint from '../components/print/ComponentToPrint';
 import { useReactToPrint } from 'react-to-print';
-import { getHistoryByOrderId, getOrderById } from '../apiCalls';
+import { createOrderAlbum, deleteOrderAlbum, getAllAlbums, getHistoryByOrderId, getOrderById } from '../apiCalls';
 import CalculateWeight from '../helper/CalculateWeight';
 import FormatCode from '../helper/FormetCode';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import { LoadingButton } from '@mui/lab';
+import { AppContext } from '../AppContextProvider';
 
 export default function Detail() {
 	const { id } = useParams();
+	const { snackNoti } = useContext(AppContext);
 
 	const [q, setQ] = useState("");
 	const [order, setOrder] = useState({});
@@ -24,6 +26,9 @@ export default function Detail() {
 	const [isFetching, setIsFetching] = useState(true);
 	const [dateLang, setDateLang] = useState("mm");
 	const [isPrinting, setIsPrinting] = useState(false);
+	const [albums, setAlbums] = useState([]);
+	const [openAlbumDialog, setOpenAlbumDialog] = useState(false);
+	const [selectedAlbum, setSelectedAlbum] = useState({});
 
 	const printRef = useRef();
 
@@ -49,6 +54,35 @@ export default function Detail() {
 		return;
 	};
 
+	const handleCloseAlbumDialog = () => {
+		setOpenAlbumDialog(false);
+	}
+	const handleChangeAlbumAutoComplete = (e, newVal) => {
+		setSelectedAlbum(newVal);
+	}
+	const handleSubmitAlbum = async () => {
+		if(!selectedAlbum) return snackNoti({msg: "Album တစ်ခုရွေးပါ", type: "warning"});
+
+		const result = await createOrderAlbum({order_id: id, album_id: selectedAlbum.id});
+		if(result.ok){
+			snackNoti({msg: "Album ထဲသို့ ထည့်သွင်းပြီးပါပြီ", type: "success"});
+			handleCloseAlbumDialog();
+
+			setOrder((prev) => ({...prev, album_id: selectedAlbum.id, album_name: selectedAlbum.name, order_album_id: result.insertId}))
+		}else{
+			snackNoti({msg: result.err, type: "error"});
+		}
+	}
+	const handleRemoveAlbum = async () => {
+		const result = await deleteOrderAlbum(order.order_album_id);
+		if(result.ok){
+			snackNoti({msg: result.msg, type: "success"});
+			setOrder((prev) => ({...prev, album_id: null, album_name: null, order_album_id: null}))
+		}else{
+			snackNoti({msg: result.err, type: "error"});
+		}
+	}
+
 	useEffect(() => {
 		const fetchOrder = async () => {
 			const result = await getOrderById(id);
@@ -63,9 +97,14 @@ export default function Detail() {
 				setHistories(result)
 			}
 		}
+		const fetchAlbum = async () => {
+			const result = await getAllAlbums();
+			if(result.ok) setAlbums(result);
+		}
 
 		fetchOrder();
 		fetchHIstory();
+		fetchAlbum();
 		setQ(localStorage.getItem("q") || "");
 	}, [])
 
@@ -113,23 +152,23 @@ export default function Detail() {
 									}
 									<IconButton color='warning' onClick={toggleDateLang}><ChangeCircleIcon /></IconButton>
 								</Typography>
-								{/* <span style={{ marginBottom: "8px" }}>
+								<span style={{ marginBottom: "8px" }}>
 									{
 										order.album_id ? (
 											<Chip
 												label={order.album_name}
 												onClick={() => navigate(`/album/${order.album_id}`)}
-												onDelete={() => {}}
+												onDelete={() => {handleRemoveAlbum()}}
 											/>
 										) : (
 											<Chip
 												label="+ Album"
 												variant='outlined'
-												onClick={() => {}}
+												onClick={() => {setOpenAlbumDialog(true)}}
 											/>
 										)
 									}
-								</span> */}
+								</span>
 								<span>
 									<CustomBadge>{order.acceptor}</CustomBadge>
 									{
@@ -283,6 +322,26 @@ export default function Detail() {
 								})
 							}
 						</Grid>
+
+						{/* choose album dialog */}
+						<Dialog open={openAlbumDialog} fullWidth onClose={handleCloseAlbumDialog}>
+							<DialogTitle>Choose Album</DialogTitle>
+							<DialogContent>
+								<Autocomplete
+									disablePortal
+									id="combo-box-demo"
+									options={albums}
+									getOptionLabel={(option) => option.name}
+									sx={{ height: 300, pt: 2 }}
+									renderInput={(params) => <TextField {...params} label="Album" />}
+									onChange={handleChangeAlbumAutoComplete}
+								/>
+							</DialogContent>
+							<DialogActions>
+								<LoadingButton onClick={handleCloseAlbumDialog}>cancle</LoadingButton>
+								<LoadingButton onClick={handleSubmitAlbum} variant='contained'>save</LoadingButton>
+							</DialogActions>
+						</Dialog>
 					</>
 				)
 			}

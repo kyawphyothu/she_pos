@@ -24,7 +24,7 @@ class Order{
 			params.push(villageId);
 		}
 
-		query += ` ORDER BY orders.date desc`;
+		query += ` ORDER BY orders.date desc, orders.created_at desc`;
 
 		if (!isCountQuery) {
 			query += ` LIMIT ?,?`;
@@ -38,10 +38,12 @@ class Order{
 
 	static async getOrderById(id){
 		const query = `
-			SELECT orders.id, orders.code, orders.name, orders.phone, orders.gold, orders.weight, orders.redeem, orders.date, acceptors.name as acceptor, villages.name as village
+			SELECT orders.id, orders.code, orders.name, orders.phone, orders.gold, orders.weight, orders.redeem, orders.date, acceptors.name as acceptor, villages.name as village, order_albums.id as order_album_id, albums.id as album_id, albums.name as album_name
 			FROM orders
 			LEFT JOIN acceptors ON acceptors.id=orders.acceptor_id
 			LEFT JOIN villages ON villages.id=orders.village_id
+			LEFT JOIN order_albums ON order_albums.order_id=orders.id
+			LEFT JOIN albums ON albums.id = order_albums.album_id
 			WHERE orders.id=?
 		`;
 		const [result, fileds] = await db.query(query, id)
