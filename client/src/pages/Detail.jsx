@@ -29,7 +29,7 @@ export default function Detail() {
 	const [albums, setAlbums] = useState([]);
 	const [openAlbumDialog, setOpenAlbumDialog] = useState(false);
 	const [selectedAlbum, setSelectedAlbum] = useState({});
-	cosnt [isLoadingAlbumAddDialogBtn, setIsLoadingAlbumAddDialogBtn] = useState(false);
+	const [isLoadingAlbumAddDialogBtn, setIsLoadingAlbumAddDialogBtn] = useState(false);
 
 	const printRef = useRef();
 
