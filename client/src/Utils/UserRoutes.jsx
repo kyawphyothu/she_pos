@@ -9,6 +9,7 @@ import PayInterest from "../pages/PayInterest";
 import Redeem from "../pages/Redeem";
 import Search from "../pages/Search";
 import TableBorrow from "../pages/TableBorrow";
+import Village from "../pages/Village";
 
 const UserRoutes = [
 	// {
@@ -54,6 +55,10 @@ const UserRoutes = [
 	{
 		path: "/album/create",
 		element: <AlbumCreate />,
+	},
+	{
+		path: "/villages",
+		element: <Village />,
 	},
 ];
 

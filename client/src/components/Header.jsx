@@ -25,6 +25,7 @@ import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
 import { AppContext } from '../AppContextProvider';
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
 
 const StyledFab = styled(Fab)({
 	position: 'absolute',
@@ -135,12 +136,23 @@ export default function Header() {
 													<LoginRoundedIcon sx={{ mr: 1 }} />
 													Logout
 												</Typography>
+											</MenuItem>,
+											<MenuItem
+												key={2}
+												onClick={() => {
+													handleCloseUserMenu();
+													navigate("/villages");
+												}}>
+												<Typography sx={{ display: "flex", justifyContent: "center" }}>
+													<LocationCityIcon sx={{ mr: 1 }} />
+													Villages
+												</Typography>
 											</MenuItem>
 										]
 									) : (
 										[
 											<MenuItem
-												key={2}
+												key={3}
 												onClick={() => {
 													handleCloseUserMenu();
 													navigate("/login");
@@ -151,7 +163,7 @@ export default function Header() {
 												</Typography>
 											</MenuItem>,
 											<MenuItem
-												key={3}
+												key={4}
 												onClick={() => {
 													handleCloseUserMenu();
 													navigate("/signup");

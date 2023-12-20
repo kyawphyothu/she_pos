@@ -138,6 +138,12 @@ export async function getAllAcceptors() {
 export async function getAllvillages() {
 	return makeApiRequest("/village", "GET");
 }
+export async function createVillage(data) {
+	return makeApiRequest("/village", "POST", {data});
+}
+export async function updateVillage(id, data) {
+	return makeApiRequest(`/village/${id}`, "PUT", {data});
+}
 
 //------------------------------------------pawn------------------------------
 export async function createPawn(data) {
