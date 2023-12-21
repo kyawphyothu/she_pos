@@ -3,7 +3,7 @@ create table acceptors(
 	name varchar(255) not null,
 	short_name varchar(255) not null,
 	primary key (id)
-)
+);
 
 insert into acceptors (id, name, short_name) VALUES
 	(1, 'အိမ်', 'အိမ်'),
