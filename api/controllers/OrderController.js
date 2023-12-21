@@ -35,3 +35,18 @@ exports.history = async (req, res) => {
 	const result = await Order.getHistoryByOrderId(order_id);
 	res.json(result);
 }
+
+exports.destroy = async (req, res) => {
+	const id = req.params.id;
+
+	try{
+		const result = await Order.destroy(id);
+		if(!result.affectedRows) return res.status(400).json({err: "delete item not found"});
+
+		return res.status(200).json({msg: "delete successful"});
+	}catch (e){
+		return res.status(500).json({err: e.message});
+	}
+
+
+}

@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, ButtonGroup, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, IconButton, LinearProgress, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, ButtonGroup, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, LinearProgress, Stack, TextField, Typography } from '@mui/material';
 import { amber, blue, cyan, green, grey, indigo, lightBlue, orange, pink, purple, red, teal } from '@mui/material/colors';
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -9,12 +9,14 @@ import GetMMDate from '../helper/GetMMDate';
 import NumChangeEngToMM from '../helper/NumChangeEngToMM';
 import ComponentToPrint from '../components/print/ComponentToPrint';
 import { useReactToPrint } from 'react-to-print';
-import { createOrderAlbum, deleteOrderAlbum, getAllAlbums, getHistoryByOrderId, getOrderById } from '../apiCalls';
+import { createOrderAlbum, deleteOrder, deleteOrderAlbum, getAllAlbums, getHistoryByOrderId, getOrderById } from '../apiCalls';
 import CalculateWeight from '../helper/CalculateWeight';
 import FormatCode from '../helper/FormetCode';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import { LoadingButton } from '@mui/lab';
 import { AppContext } from '../AppContextProvider';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 export default function Detail() {
 	const { id } = useParams();
@@ -30,6 +32,8 @@ export default function Detail() {
 	const [openAlbumDialog, setOpenAlbumDialog] = useState(false);
 	const [selectedAlbum, setSelectedAlbum] = useState({});
 	const [isLoadingAlbumAddDialogBtn, setIsLoadingAlbumAddDialogBtn] = useState(false);
+	const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
+	const [isLoadingDeleteBtn, setIsLoadingDeleteBtn] = useState(false);
 
 	const printRef = useRef();
 
@@ -88,6 +92,28 @@ export default function Detail() {
 		}
 	}
 
+	const handleDeleteOrder = async () => {
+		setIsLoadingDeleteBtn(true);
+
+		const result = await deleteOrder(id);
+		if(result.ok){
+			snackNoti({msg: result.msg, type: "success"});
+			navigate(-1);
+		}else{
+			snackNoti({msg: result.err, type: "error"});
+		}
+
+		setIsLoadingDeleteBtn(false);
+	}
+
+	const EditButton = () => {
+		return (
+			<IconButton color='primary'>
+				<EditIcon />
+			</IconButton>
+		)
+	}
+
 	useEffect(() => {
 		const fetchOrder = async () => {
 			const result = await getOrderById(id);
@@ -126,15 +152,15 @@ export default function Detail() {
 							<IconButton onClick={handleClickBckBtn}>
 								<ArrowBackRoundedIcon />
 							</IconButton>
-							<IconButton sx={{ color: orange[400] }} onClick={handlePrint}>
-								{
-									isPrinting ? (
-										<LoadingButton loading></LoadingButton>
-									) : (
-										<PrintRoundedIcon  />
-									)
-								}
-							</IconButton>
+							{
+								isPrinting ? (
+									<LoadingButton loading></LoadingButton>
+								) : (
+									<IconButton sx={{ color: orange[400] }} onClick={handlePrint}>
+										<PrintRoundedIcon />
+									</IconButton>
+								)
+							}
 							<div style={{ display: "none" }}>
 								<ComponentToPrint ref={printRef} order={order} histories={histories} />
 							</div>
@@ -143,7 +169,14 @@ export default function Detail() {
 
 						<Box className="floatingCard" sx={{ borderRadius: "0.1rem", mb: 2 }}>
 							<Stack>
-								<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>{order.name}</Typography>
+								<Box sx={{ display: "flex", justifyContent: "space-between" }}>
+									<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>
+										{order.name}
+									</Typography>
+									<IconButton color='error' onClick={() => setOpenDeleteConfirmDialog(true)}>
+										<DeleteForeverIcon />
+									</IconButton>
+								</Box>
 								<Typography variant='subtitle1' color={teal[500]}>{FormatCode(order.code)}</Typography>
 								<Typography variant='subtitle1'>{order.village}</Typography>
 								<Typography variant='subtitle1'>{order.phone}</Typography>
@@ -184,7 +217,7 @@ export default function Detail() {
 								</span>
 								{
 									!Boolean(order.redeem) && (
-										<Box sx={{ display: "flex", justifyContent: "space-evenly", flexWrap: "wrap", mt: 1 }}>
+										<Box sx={{ display: "flex", justifyContent: "space-evenly", flexWrap: "wrap", mt: 2 }}>
 											<Button size='small' variant='outlined' onClick={() => navigate(`/htetyu/${order.id}`) }>ထပ်ယူ</Button>
 											<Button size='small' variant='outlined' onClick={() => navigate(`/payinterest/${order.id}`) }>အတိုးဆပ်</Button>
 											<Button size='small' variant='contained' color='error' onClick={() => navigate(`/reextract/${order.id}`) }>ရွေး</Button>
@@ -202,7 +235,7 @@ export default function Detail() {
 								</Divider>
 							</Grid>
 							{histories.length &&
-								histories.map((history) => {
+								histories.map((history, index) => {
 									return (
 										<React.Fragment key={history.created_at}>
 											{/* ထား */}
@@ -231,7 +264,10 @@ export default function Detail() {
 													<Stack>
 														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
 															{history.name}
-															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ထပ်ယူ)</Typography>
+															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(ထပ်ယူ)</Typography>
+															{
+																index === histories.length-1 && <EditButton />
+															}
 														</Typography>
 														<Typography variant='subtitle1'>{history.gold}</Typography>
 														<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
@@ -254,7 +290,10 @@ export default function Detail() {
 													<Stack>
 														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
 															{history.name}
-															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(အတိုးဆပ်)</Typography>
+															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(အတိုးဆပ်)</Typography>
+															{
+																index === histories.length-1 && <EditButton />
+															}
 														</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (ဆပ်)</Typography>
 														<Typography variant='subtitle1' color={grey[500]}>
@@ -282,7 +321,10 @@ export default function Detail() {
 													<Stack>
 														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
 															{history.name}
-															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ခွဲရွေး)</Typography>
+															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(ခွဲရွေး)</Typography>
+															{
+																index === histories.length-1 && <EditButton />
+															}
 														</Typography>
 														<Typography variant='subtitle1'>{history.take_gold} (ရွေး)</Typography>
 														<Typography variant='subtitle1'>{history.left_gold} (ကျန်)</Typography>
@@ -308,7 +350,10 @@ export default function Detail() {
 													<Stack>
 														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
 															{history.name}
-															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem" }} color={red[500]}>(ရွေး)</Typography>
+															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(ရွေး)</Typography>
+															{
+																index === histories.length-1 && <EditButton />
+															}
 														</Typography>
 														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
 														<Typography variant='subtitle1' color={grey[500]}>
@@ -345,6 +390,18 @@ export default function Detail() {
 							<DialogActions>
 								<LoadingButton loading={isLoadingAlbumAddDialogBtn} onClick={handleCloseAlbumDialog}>cancle</LoadingButton>
 								<LoadingButton loading={isLoadingAlbumAddDialogBtn} onClick={handleSubmitAlbum} variant='contained'>save</LoadingButton>
+							</DialogActions>
+						</Dialog>
+
+						{/* delete order confirm dialog */}
+						<Dialog open={openDeleteConfirmDialog} fullWidth onClose={() => setOpenDeleteConfirmDialog(false)}>
+							<DialogTitle>Delete Confirm</DialogTitle>
+							<DialogContent>
+								<DialogContentText>ဤစာရင်းကို အပြီးတိုင် ဖျက်ပစ်မည်။ သေချာပါသလား?</DialogContentText>
+							</DialogContent>
+							<DialogActions>
+								<LoadingButton loading={isLoadingDeleteBtn} onClick={() => setOpenDeleteConfirmDialog(false)}>cancle</LoadingButton>
+								<LoadingButton loading={isLoadingDeleteBtn} variant='contained' color='error' onClick={handleDeleteOrder}>သေချာပါသည်</LoadingButton>
 							</DialogActions>
 						</Dialog>
 					</>

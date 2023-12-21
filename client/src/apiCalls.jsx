@@ -164,6 +164,9 @@ export async function getOrderById(id) {
 export async function getHistoryByOrderId(id) {		// history
 	return makeApiRequest(`/order/history/${id}`, "GET");
 }
+export async function deleteOrder(id) {		// history
+	return makeApiRequest(`/order/${id}`, "DELETE");
+}
 
 
 //------------------------------------------htet_yu------------------------------

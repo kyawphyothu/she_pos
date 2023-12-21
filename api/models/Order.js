@@ -116,6 +116,11 @@ class Order{
 
 		return result;
 	}
+
+	static async destroy (id){
+		const [results, fields] = await db.query(`DELETE FROM orders WHERE id=?`, id);
+		return results;
+	}
 }
 
 module.exports = Order;
