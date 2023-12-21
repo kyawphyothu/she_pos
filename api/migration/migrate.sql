@@ -1,0 +1,11 @@
+SOURCE ./users.sql
+SOURCE ./acceptors.sql
+SOURCE ./villages.sql
+SOURCE ./orders.sql
+SOURCE ./pawns.sql
+SOURCE ./htet_yus.sql
+SOURCE ./pay_interests.sql
+SOURCE ./half_redeem.sql
+SOURCE ./redeem.sql
+SOURCE ./albums.sql
+SOURCE ./order_albums.sql
