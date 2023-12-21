@@ -5,7 +5,7 @@ SOURCE ./orders.sql
 SOURCE ./pawns.sql
 SOURCE ./htet_yus.sql
 SOURCE ./pay_interests.sql
-SOURCE ./half_redeem.sql
-SOURCE ./redeem.sql
+SOURCE ./half_redeems.sql
+SOURCE ./redeems.sql
 SOURCE ./albums.sql
 SOURCE ./order_albums.sql
