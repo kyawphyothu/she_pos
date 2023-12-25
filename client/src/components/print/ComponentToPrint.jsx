@@ -10,6 +10,7 @@ import { red } from '@mui/material/colors';
 import { NoEncryption } from '@mui/icons-material';
 import logo from '../../assets/she1.png'
 import Barcode from 'react-barcode';
+import num_to_mm_word from '../../helper/NumToMMWord';
 
 const ComponentToPrint = forwardRef((props, ref) => {
 	const { order, histories } = props;
@@ -18,8 +19,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
 		<div ref={ref} style={styles.main}>
 			<div style={{ textAlign: "center" }}>
 				<img src={logo} style={{ borderRadius: "50%", width: "50px" }} />
-				<Typography variant='subtitle1' sx={{ fontWeight: "600" }}>သျှီ မိသားစု</Typography>
-				<Typography variant='body2' sx={{ fontWeight: "400" }} mb={2}>09-427208035, 09-444005537, 09-772863069, 09-401656711</Typography>
+				{/* <Typography variant='subtitle1' sx={{ fontWeight: "600" }}>သျှီ မိသားစု</Typography> */}
+				<Typography variant='body2' sx={{ fontWeight: "400" }}>09-427208035, 09-444005537</Typography>
+				<Typography variant='body2' sx={{ fontWeight: "400" }} mb={2}>09-772863069, 09-401656711</Typography>
 			</div>
 
 			<Stack>
@@ -63,8 +65,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
 												<Typography variant='body2'>(အပေါင်ထား)</Typography>
 											</Typography>
 											<Typography variant='body2'>{history.gold}</Typography>
-											<Typography variant='body2'>{CalculateWeight(history.weight)}</Typography>
-											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
+											<Typography variant='body2'>{CalculateWeight(history.weight, "eng")}</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.price, true)} ({num_to_mm_word(history.price)}) ကျပ်တိတိ</Typography>
+											{/* <Typography variant='body2' sx={{ fontWeight: "600" }}>{num_to_mm_word(history.price)} ကျပ်တိတိ</Typography> */}
 											<Typography variant='body2'>{GetMMDate(new Date(history.date))}</Typography>
 											<Typography variant='body2'>--{history.description}--</Typography>
 										</Stack>
@@ -80,8 +83,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
 												<Typography variant='body2'>(ထပ်ယူ)</Typography>
 											</Typography>
 											<Typography variant='body2'>{history.gold}</Typography>
-											<Typography variant='body2'>{CalculateWeight(history.weight)}</Typography>
+											<Typography variant='body2'>{CalculateWeight(history.weight, "eng")}</Typography>
 											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{num_to_mm_word(history.price)} ကျပ်တိတိ</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.date))}</Typography>
 											<Typography variant='body2'>--{history.description}--</Typography>
 										</Stack>
@@ -97,6 +101,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 												<Typography variant='body2'>(အတိုးဆပ်)</Typography>
 											</Typography>
 											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (ဆပ်)</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{num_to_mm_word(history.pay_price)} ကျပ်တိတိ (ဆပ်)</Typography>
 											{/* <Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography> */}
 											<Typography variant='body2'>{GetMMDate(new Date(history.pay_date))} (ဆပ်)</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.change_date))} (ပြောင်း)</Typography>
@@ -115,9 +120,11 @@ const ComponentToPrint = forwardRef((props, ref) => {
 											</Typography>
 											<Typography variant='body2'>{history.take_gold} (ရွေး)</Typography>
 											<Typography variant='body2'>{history.left_gold} (ကျန်)</Typography>
-											<Typography variant='body2'>{CalculateWeight(history.weight)}</Typography>
+											<Typography variant='body2'>{CalculateWeight(history.weight, "eng")}</Typography>
 											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (သွင်း)</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{num_to_mm_word(history.pay_price)} ကျပ်တိတိ (သွင်း)</Typography>
 											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{num_to_mm_word(history.left_price)} ကျပ်တိတိ (ကျန်)</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.date))}</Typography>
 											<Typography variant='body2'>--{history.description}--</Typography>
 										</Stack>
@@ -133,6 +140,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 												<Typography variant='body2'>(ရွေး)</Typography>
 											</Typography>
 											<Typography variant='body2' sx={{ fontWeight: "600" }}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
+											<Typography variant='body2' sx={{ fontWeight: "600" }}>{num_to_mm_word(history.price)} ကျပ်တိတိ</Typography>
 											<Typography variant='body2'>{GetMMDate(new Date(history.date))}</Typography>
 											<Typography variant='body2'>--{history.description}--</Typography>
 										</Stack>
