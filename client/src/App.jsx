@@ -1,4 +1,4 @@
-import { Container, CssBaseline, Typography } from '@mui/material'
+import { Container, CssBaseline, LinearProgress, Typography } from '@mui/material'
 import React, { useContext, useEffect } from 'react'
 import Header from './components/Header'
 import { Navigate, Route, Routes } from 'react-router-dom'
@@ -12,7 +12,7 @@ import SnackMessage from './components/SnackMessage'
 import { fetchUser } from './apiCalls'
 
 export default function App() {
-	const { auth, setAuth, setAuthUser } = useContext(AppContext);
+	const { auth, setAuth, setAuthUser, isFetchingUser, setIsFetchingUser } = useContext(AppContext);
 
 	useEffect(() => {
 		(
@@ -23,6 +23,8 @@ export default function App() {
 					setAuth(true);
 					setAuthUser(result);
 				}
+
+				setIsFetchingUser(false);
 			}
 		)()
 
@@ -33,20 +35,26 @@ export default function App() {
 			<CssBaseline />
 			<Header />
 			<Container maxWidth="sm" sx={{ py: "70px" }}>
-				<Routes>
-					{auth && UserRoutes.map((r) => {
-						return <Route
-							key={r.path}
-							path={r.path}
-							element={r.element}
-						/>
-					})}
-					<Route path="/" element={<Home />} />
-					<Route path="/page/:id" element={<Home />} />
-					<Route path='/signup' element={<Signup />} />
-					<Route path='/login' element={<Login />} />
-					<Route path='*' element={<NotFound />} />
-				</Routes>
+				{
+					isFetchingUser ? (
+						<LinearProgress color='warning' />
+					):(
+						<Routes>
+							{auth && UserRoutes.map((r) => {
+								return <Route
+									key={r.path}
+									path={r.path}
+									element={r.element}
+								/>
+							})}
+							<Route path="/" element={<Home />} />
+							<Route path="/page/:id" element={<Home />} />
+							<Route path='/signup' element={<Signup />} />
+							<Route path='/login' element={<Login />} />
+							<Route path='*' element={<NotFound />} />
+						</Routes>
+					)
+				}
 
 				<SnackMessage />
 			</Container>

@@ -9,6 +9,7 @@ export const AppContextProvider = ({ children }) => {
 	const [authUser, setAuthUser] = useState({});
 	const [isSnack, setIsSnack] = useState(false);
 	const [snackMsg, setSnackMsg] = useState({});
+	const [isFetchingUser, setIsFetchingUser] = useState(true);
 
 	const snackNoti = ({ type, msg }) => {
 		if (isSnack) {
@@ -35,6 +36,9 @@ export const AppContextProvider = ({ children }) => {
 		snackMsg,
 		setSnackMsg,
 		snackNoti,
+		//fetchingUser
+		isFetchingUser,
+		setIsFetchingUser
 	};
 
 	return <AppContext.Provider value={authContextValue}>{children}</AppContext.Provider>;
