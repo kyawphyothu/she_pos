@@ -24,7 +24,7 @@ export default function Search() {
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 	const [orders, setOrders] = useState([]);
 	const [totalOrders, setTotalOrders] = useState(0);
-	const [searchText, setSearchText] = useState(searchParams.get("q"));
+	const [searchText, setSearchText] = useState(searchParams.get("q") || "");
 	const [currentPage, setCurrentPage] = useState(+searchParams.get("page") || 1);
 
 	const limit = 3;
