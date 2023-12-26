@@ -33,7 +33,7 @@ export default function Search() {
 		setSearchText(code)
 		setSearchParams({q: code});
 		setOpenCameraDialog(false);
-		location.reload();
+		// location.reload();
 	};
 
 	const handleCloseCameraDialog = () => {
@@ -138,7 +138,8 @@ export default function Search() {
 				<TextField
 					label="အမည် (သို့) code"
 					size='small'
-					defaultValue={searchText}
+					// defaultValue={searchText}
+					value={searchText}
 					onChange={(e) => setSearchText(e.target.value)}
 					sx={{
 						flexGrow: 1,
