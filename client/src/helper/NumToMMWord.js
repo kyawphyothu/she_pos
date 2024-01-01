@@ -8,12 +8,14 @@ const num_to_mm_word = (n) => {
 
 	let result = [];
 	let isNoneZeroBehind = false;
+	let useAndAfterMillion = false;
 	n_arr.map((i, index) => {
 		if (index < 6) {
 			// အောက်ကမြင့်(့) ထည့် မထည့်ဆုံဖြတ်
 			if(index >= 4) isNoneZeroBehind = false;
 
 			if(i === "0") return;
+			if(!useAndAfterMillion) useAndAfterMillion=true;
 
 			result.push(`${numbers_mm[i]}${number_terms_mm[index]}${isNoneZeroBehind ? "့": ""}`);
 
@@ -27,12 +29,12 @@ const num_to_mm_word = (n) => {
 			// အောက်ကမြင့်(့) ထည့် မထည့်ဆုံဖြတ်
 			if(index<1 ||index >= 4) isNoneZeroBehind = false;
 
-			if (index===0) result.push(`နှင့်`);
+			if (index===0 && useAndAfterMillion) result.push(`နှင့်`);
 
 			if (i === '0') return;
 
 			// "n_arr.length-1-6" means last item of n_arr
-			result.push(`${index===n_arr.length-1-6 && (n_arr[6]==='0' || n_arr.length>=10) ? "သန်း": ""}${numbers_mm[i]}${number_terms_mm[index]}${isNoneZeroBehind ? "့": ""}${index===0 && n_arr[6]!=='0' ? "သန်း": ""}`);
+			result.push(`${index===n_arr.length-1-6 && n_arr[6]==='0' ? "သန်း": ""}${numbers_mm[i]}${number_terms_mm[index]}${isNoneZeroBehind ? "့": ""}${index===0 && n_arr[6]!=='0' ? "သန်း": ""}`);
 
 			// အောက်ကမြင့်(့) ထည့် မထည့်ဆုံဖြတ်
 			if(!isNoneZeroBehind) isNoneZeroBehind = true;

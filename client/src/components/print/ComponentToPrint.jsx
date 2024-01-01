@@ -47,11 +47,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
 				</span>
 			</Stack>
 
+			<hr style={{ borderTop: "2px dashed #000", width: "80%" }} />
 
-			<Grid container rowGap={3} mb={3} mt={2}>
-				<Grid item xs={12}>
-					<hr style={{ borderTop: "2px dashed #000", width: "80%" }} />
-				</Grid>
+			<Grid container rowGap={3} mb={3} mt={0}>
 				{histories.length &&
 					histories.map((history) => {
 						return (
@@ -150,11 +148,9 @@ const ComponentToPrint = forwardRef((props, ref) => {
 						)
 					})
 				}
-				<Grid item xs={12} display={"flex"} justifyContent={"center"}>
-					<Barcode value={order.code} width={2} height={50} fontSize={15} />
-				</Grid>
 
 				<Grid item textAlign={"center"} xs={12}>
+					<Barcode value={order.code} width={2} height={50} fontSize={15} />
 					<hr style={{ width: "80%", border: "none", borderTop: "2px dashed #000" }} />
 					<Typography variant='body2'>ဤဘောင်ချာဖြင့် ပြန်ရွေးပါ</Typography>
 					<Typography variant='body2'>၆လကျော်သော ပစ္စည်းများ တာဝန်မယူပါ</Typography>
