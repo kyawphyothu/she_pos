@@ -6,6 +6,8 @@ const User = require("../models/UserModel");
 const secret = process.env.SECRET_KEY; //for jwt
 
 exports.signup = async (req, res) => {
+	return res.status(400).json({err: "you can't sign up."});
+
 	const { name, username, password } = req.body;
 
 	if (!name || !username || !password) {
