@@ -105,8 +105,6 @@ class Order{
 	}
 
 	static async update(dataObj={}, id) {
-		dataObj.code = new Date().getTime();
-
 		const columns = Object.keys(dataObj); // []
 		const setColumns = columns.map(i => i + "=?"); // ["c1=?"", "c2=?"]
 		const data = Object.values(dataObj); // []
