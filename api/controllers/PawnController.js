@@ -49,6 +49,8 @@ exports.create = async (req, res) => {
 		const resultPawn = await Pawn.create(PawnCreateData);
 		if(!resultPawn.insertId) return res.status(400).json({err: "error in insert into pawns"});
 
+		if(!data.album_id) return res.status(200).json({msg: "ထည့်သွင်းပြီးပါပြီ", id: insertOrderId});
+
 		// insert into order_albums
 		const OrderAlbumCreateData = {
 			order_id: insertOrderId,
