@@ -63,6 +63,7 @@ export default function Add() {
 		setIsFetchingAlbumDetail(true);
 		if(!newVal) {
 			setFormData(prev => ({...prev, name: "", phone: "", album: null, village: null }))
+			setIsFetchingAlbumDetail(false);
 			return;
 		};
 		const result = await getLatestOrderByAlbumId(newVal.id);
