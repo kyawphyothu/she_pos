@@ -11,6 +11,7 @@ import { AppContext } from '../../AppContextProvider';
 import { format, parse } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { styled, lighten, darken } from '@mui/system';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Add() {
 	const { snackNoti } = useContext(AppContext);
@@ -23,6 +24,7 @@ export default function Add() {
 	const [error, setError] = useState({name: 0, village_id: 0, gold: 0, weight: 0, price: 0, date: 0})
 	const [MMdate, setMMDate] = useState(GetMMDate(new Date()));
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
+	const [isFetchingAlbumDetail, setIsFetchingAlbumDetail] = useState(false);
 
 	const kRef = useRef();	//ကျပ်
 	const pRef = useRef();	//ပဲ
@@ -58,11 +60,13 @@ export default function Add() {
 		setFormData(prev => ({...prev, village: newVal}))
 	}
 	const handleChangeAlbum = async (event, newVal) => {
+		setIsFetchingAlbumDetail(true);
 		if(!newVal) {
 			setFormData(prev => ({...prev, name: "", phone: "", album: null, village: null }))
 			return;
 		};
 		const result = await getLatestOrderByAlbumId(newVal.id);
+		setIsFetchingAlbumDetail(false);
 		if(!result.order) {
 			setFormData(prev => ({...prev, name: "", phone: "", album: albumOptions.filter(i => i.id===newVal.id)[0], village: null }))
 			return;
@@ -176,8 +180,25 @@ export default function Add() {
 							getOptionLabel={(option) => option.name}
 							fullWidth
 							size='small'
+							disabled={isFetchingAlbumDetail}
+							loading={isFetchingAlbumDetail}
 							// error={Boolean(error.village_id)}
-							renderInput={(params) => <TextField {...params} helperText={error.village_id ? "required" : ""} label="Album" />}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									helperText={error.village_id ? "required" : ""}
+									label="Album"
+									InputProps={{
+										...params.InputProps,
+										endAdornment: (
+										<React.Fragment>
+											{isFetchingAlbumDetail ? <CircularProgress color="inherit" size={20} /> : null}
+											{params.InputProps.endAdornment}
+										</React.Fragment>
+										),
+									}}
+								/>
+							)}
 							name="album"
 							isOptionEqualToValue={(option, value) => option.id === value.id}
 							onChange={handleChangeAlbum}
