@@ -1,5 +1,6 @@
 const Pawn = require('../models/Pawn');
 const Order = require('../models/Order');
+const OrderAlbum = require('../models/OrderAlbum');
 
 exports.create = async (req, res) => {
 	const { data } = req.body; // {name, phone=null, villlage_id, gold, weight, price, acceptor_id, date, redeem=0, description}
@@ -47,6 +48,14 @@ exports.create = async (req, res) => {
 		}
 		const resultPawn = await Pawn.create(PawnCreateData);
 		if(!resultPawn.insertId) return res.status(400).json({err: "error in insert into pawns"});
+
+		// insert into order_albums
+		const OrderAlbumCreateData = {
+			order_id: insertOrderId,
+			album_id: data.album_id
+		};
+		const resultOrderAlbum = await OrderAlbum.create(OrderAlbumCreateData);
+		if(!resultOrderAlbum.insertId) return res.status(400).json({err: "error in insert into order albums"});
 
 		return res.status(200).json({msg: "ထည့်သွင်းပြီးပါပြီ", id: insertOrderId});
 	} catch (e) {

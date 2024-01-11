@@ -197,6 +197,9 @@ export async function getAllAlbums() {
 export async function getOrdersByAlbumId(id) {
 	return makeApiRequest(`/album/${id}`, "GET");
 }
+export async function getLatestOrderByAlbumId(id) { //get latest order by album id
+	return makeApiRequest(`/album/${id}/latestorder`, "GET");
+}
 export async function createAlbum(data) {
 	return makeApiRequest(`/album`, "POST", {data});
 }

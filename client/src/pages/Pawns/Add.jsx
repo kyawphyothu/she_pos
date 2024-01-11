@@ -4,10 +4,10 @@ import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import GetMMDate from '../helper/GetMMDate';
+import GetMMDate from '../../helper/GetMMDate';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
-import { createPawn, getAllAcceptors, getAllvillages } from '../apiCalls';
-import { AppContext } from '../AppContextProvider';
+import { createPawn, getAllAcceptors, getAllAlbums, getAllvillages, getLatestOrderByAlbumId } from '../../apiCalls';
+import { AppContext } from '../../AppContextProvider';
 import { format, parse } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { styled, lighten, darken } from '@mui/system';
@@ -17,8 +17,9 @@ export default function Add() {
 
 	const [villages, setVillages] = useState([]);
 	const [acceptors, setAcceptors] = useState([]);
+	const [albums, setAlbums] = useState([]);
 	const [saveType, setSaveType] = useState("save");
-	const [formData, setFormData] = useState({name: "", village_id: 0, phone: "", gold: "", weight: 0, price: 0, date: "", acceptor_id: 1, description: ""})
+	const [formData, setFormData] = useState({album: null, name: "", village: null, phone: "", gold: "", weight: 0, price: 0, date: "", acceptor_id: 1, description: ""})
 	const [error, setError] = useState({name: 0, village_id: 0, gold: 0, weight: 0, price: 0, date: 0})
 	const [MMdate, setMMDate] = useState(GetMMDate(new Date()));
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
@@ -30,7 +31,14 @@ export default function Add() {
 
 	const navigate = useNavigate();
 
-	const options = villages.map((option) => {
+	const villageOptions = villages.map((option) => {
+		const firstLetter = option.name[0].toUpperCase();
+		return {
+			firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
+			...option,
+		};
+	});
+	const albumOptions = albums.map((option) => {
 		const firstLetter = option.name[0].toUpperCase();
 		return {
 			firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
@@ -42,11 +50,24 @@ export default function Add() {
 		setFormData(prev => ({...prev, acceptor_id: id}));
 	}
 	const handleChangeVillage = (event, newVal) => {
+		console.log(newVal)
 		if(!newVal) {
-			setFormData(prev => ({...prev, village_id: 0}))
+			setFormData(prev => ({...prev, village: null}))
 			return;
 		};
-		setFormData(prev => ({...prev, village_id: newVal.id}))
+		setFormData(prev => ({...prev, village: newVal}))
+	}
+	const handleChangeAlbum = async (event, newVal) => {
+		if(!newVal) {
+			setFormData(prev => ({...prev, name: "", phone: "", album: null, village: null }))
+			return;
+		};
+		const result = await getLatestOrderByAlbumId(newVal.id);
+		if(!result.order) {
+			setFormData(prev => ({...prev, name: "", phone: "", album: albumOptions.filter(i => i.id===newVal.id)[0], village: null }))
+			return;
+		}
+		setFormData(prev => ({...prev, name: result.order.name, phone: result.order.phone, album: albumOptions.filter(i => i.id===newVal.id)[0], village: villageOptions.filter(i => i.id===result.order.village_id)[0] }))
 	}
 
 	const handleChangeFormData = (e) => {
@@ -65,7 +86,11 @@ export default function Add() {
 	}
 
 	const handleSubmit = async () => {
-		const data = formData;
+		const data = {...formData};
+		data.album_id = data.album?.id;
+		data.village_id = data.village.id;
+		delete data.album;
+		delete data.village;
 		data.weight = +rRef.current.value + (pRef.current.value*8) + (kRef.current.value*128);
 		data.redeem = 0;
 
@@ -115,9 +140,15 @@ export default function Add() {
 			if(!result.ok) return;
 			setVillages(result);
 		}
+		const fetchAlbums = async () => {
+			const result = await getAllAlbums();
+			if(!result.ok) return;
+			setAlbums(result);
+		}
 
 		fetchAcceptors();
 		fetchVillages();
+		fetchAlbums();
 		setFormData(prev => ({...prev, acceptor_id: +localStorage.getItem("acceptor_id") || 1}))
 	}, [])
 
@@ -139,12 +170,33 @@ export default function Add() {
 
 				<Grid container spacing={2} pb={4}>
 					<Grid item xs={12}>
+						<Autocomplete
+							options={albumOptions.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+							groupBy={(option) => option.firstLetter}
+							getOptionLabel={(option) => option.name}
+							fullWidth
+							size='small'
+							// error={Boolean(error.village_id)}
+							renderInput={(params) => <TextField {...params} helperText={error.village_id ? "required" : ""} label="Album" />}
+							name="album"
+							isOptionEqualToValue={(option, value) => option.id === value.id}
+							onChange={handleChangeAlbum}
+							renderGroup={(params) => (
+								<li key={params.key}>
+									<GroupHeader>{params.group}</GroupHeader>
+									<GroupItems>{params.children}</GroupItems>
+								</li>
+							)}
+						/>
+					</Grid>
+					<Grid item xs={12}>
 						<TextField
 							label="ပေါင်သူ အမည်"
 							size="small"
 							name='name'
 							fullWidth
 							required
+							value={formData.name}
 							onChange={handleChangeFormData}
 							// error={Boolean(error.name)}
 							helperText={error.name ? "required" : ""}
@@ -152,11 +204,11 @@ export default function Add() {
 					</Grid>
 					<Grid item xs={12}>
 						<Autocomplete
-							id="grouped-demo"
-							options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+							options={villageOptions.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
 							groupBy={(option) => option.firstLetter}
 							getOptionLabel={(option) => option.name}
 							fullWidth
+							value={formData.village}
 							size='small'
 							// error={Boolean(error.village_id)}
 							renderInput={(params) => <TextField {...params} helperText={error.village_id ? "required" : ""} label="နေရပ်" />}
@@ -177,6 +229,7 @@ export default function Add() {
 							size="small"
 							type='number'
 							name='phone'
+							value={formData.phone}
 							fullWidth
 							onChange={handleChangeFormData}
 						/>

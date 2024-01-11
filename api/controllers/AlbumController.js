@@ -17,6 +17,17 @@ exports.show = async (req, res) => {
 	}
 }
 
+exports.latestorder = async (req, res) => {
+	const id = req.params.id;
+
+	try{
+		const order = await Album.getLatestOrderByAlbumId(id);
+		res.status(200).json({ order })
+	}catch (e){
+		res.status(500).json({ err: e.message })
+	}
+}
+
 exports.create = async (req, res) => {
 	const { data } = req.body;
 

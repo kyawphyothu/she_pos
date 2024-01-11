@@ -1,4 +1,4 @@
-import Add from "../pages/Add";
+import Add from "../pages/Pawns/Add";
 import Album from "../pages/Album";
 import AlbumDetail from "../pages/Album/Detail";
 import AlbumCreate from "../pages/Album/Create";

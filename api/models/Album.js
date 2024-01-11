@@ -41,6 +41,20 @@ class Album{
 		return results[0];
 	}
 
+	static async getLatestOrderByAlbumId(album_id){
+		const query = `
+			SELECT orders.name, orders.phone, orders.village_id FROM orders
+			LEFT JOIN order_albums ON orders.id=order_albums.order_id
+			LEFT JOIN albums ON albums.id=order_albums.album_id
+			WHERE albums.id=?
+			ORDER BY orders.id DESC
+			LIMIT 1
+		`;
+
+		const [results, fields] = await db.query(query, album_id);
+		return results[0];
+	}
+
 	static async delete(id){
 		const [results, fileds] = await db.query(`DELETE FROM albums WHERE id=?`, id);
 		return results;
