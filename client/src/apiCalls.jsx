@@ -146,8 +146,14 @@ export async function updateVillage(id, data) {
 }
 
 //------------------------------------------pawn------------------------------
+export async function getPawnById(id) {
+	return makeApiRequest(`/pawn/${id}`, "GET");
+}
 export async function createPawn(data) {
 	return makeApiRequest("/pawn", "POST", {data});
+}
+export async function updatePawn(order_id, data){
+	return makeApiRequest(`/pawn/${order_id}`, "PUT", {data});
 }
 
 

@@ -1,4 +1,5 @@
 import Add from "../pages/Pawns/Add";
+import EditPawn from "../pages/Pawns/Edit";
 import Album from "../pages/Album";
 import AlbumDetail from "../pages/Album/Detail";
 import AlbumCreate from "../pages/Album/Create";
@@ -19,6 +20,10 @@ const UserRoutes = [
 	{
 		path: "/add",
 		element: <Add />,
+	},
+	{
+		path: "/editpawn/:id",
+		element: <EditPawn />,
 	},
 	{
 		path: "/search",

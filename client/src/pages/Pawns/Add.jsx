@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Autocomplete, Box, Button, Grid, IconButton, Paper, Stack, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, TextField, Typography } from '@mui/material'
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs'
@@ -12,6 +12,11 @@ import { format, parse } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { styled, lighten, darken } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
+import CalculateWeight from '../../helper/CalculateWeight';
+import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
+import { green, grey, orange } from '@mui/material/colors';
+import NumChangeEngToMM from '../../helper/NumChangeEngToMM';
+import CustomBadge from '../../components/CustomBudge';
 
 export default function Add() {
 	const { snackNoti } = useContext(AppContext);
@@ -19,12 +24,12 @@ export default function Add() {
 	const [villages, setVillages] = useState([]);
 	const [acceptors, setAcceptors] = useState([]);
 	const [albums, setAlbums] = useState([]);
-	const [saveType, setSaveType] = useState("save");
 	const [formData, setFormData] = useState({album: null, name: "", village: null, phone: "", gold: "", weight: 0, price: 0, date: "", acceptor_id: 1, description: ""})
 	const [error, setError] = useState({name: 0, village_id: 0, gold: 0, weight: 0, price: 0, date: 0})
 	const [MMdate, setMMDate] = useState(GetMMDate(new Date()));
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 	const [isFetchingAlbumDetail, setIsFetchingAlbumDetail] = useState(false);
+	const [isOpenVerifyDialog, setIsOpenVerifyDialog] = useState(false);
 
 	const kRef = useRef();	//ကျပ်
 	const pRef = useRef();	//ပဲ
@@ -90,6 +95,10 @@ export default function Add() {
 		setMMDate(GetMMDate(newVal.$d));
 	}
 
+	const handleVerify = () => {
+		setIsOpenVerifyDialog(true);
+	}
+
 	const handleSubmit = async () => {
 		const data = {...formData};
 		data.album_id = data.album?.id;
@@ -120,8 +129,7 @@ export default function Add() {
 			snackNoti({type: "success", msg: res.msg});
 			localStorage.setItem("acceptor_id", data.acceptor_id);
 
-			if(saveType === "save") navigate(`/`);
-			if(saveType === "saveandprint") navigate(`/detail/${res.id}`);
+			navigate(`/detail/${res.id}`, {replace: true});
 		} else {
 			if(res.err === "validation"){
 				Object.keys(res.validation).map((i) => setError(prev => ({...prev, [i]: 1})));
@@ -168,10 +176,10 @@ export default function Add() {
 			</Box>
 
 			<form onSubmit={(e) => {
-				e.preventDefault();
+					e.preventDefault();
 
-				handleSubmit();
-			}}>
+					handleVerify();
+				}}>
 
 				<Grid container spacing={2} pb={4}>
 					<Grid item xs={12}>
@@ -349,11 +357,36 @@ export default function Add() {
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<LoadingButton loading={isLoadingBtn} variant='outlined' sx={{ mr:2 }} type='submit' onClick={() => setSaveType("save")}>save</LoadingButton>
-						<LoadingButton loading={isLoadingBtn} variant='contained' type='submit' onClick={() => setSaveType("saveandprint")}>save & print</LoadingButton>
+						{/* <LoadingButton loading={isLoadingBtn} variant='outlined' sx={{ mr:2 }} type='submit' onClick={() => setSaveType("save")}>save</LoadingButton> */}
+						<LoadingButton loading={isLoadingBtn} variant='contained' type='submit'>save & print</LoadingButton>
 					</Grid>
 				</Grid>
 			</form>
+
+			{/* verify dialog */}
+			<Dialog open={isOpenVerifyDialog} maxWidth="xs" fullWidth onClose={() => setIsOpenVerifyDialog(false)}>
+				<DialogTitle alignItems={"center"} display={"flex"}>
+					<Typography component={"p"} mr={1}>အတည်ပြုပါ</Typography>
+					<TaskAltRoundedIcon color="success" />
+				</DialogTitle>
+				<DialogContent>
+					<div>
+						<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>{formData.name} (အပေါင်ထား)</Typography>
+						<Typography variant='subtitle1'>{formData.village?.name}</Typography>
+						<Typography variant='subtitle1'>{formData.phone}</Typography>
+						<Typography variant='subtitle1'>{formData.gold}</Typography>
+						<Typography variant='subtitle1' color={orange[500]}>{kRef.current?.value && NumChangeEngToMM(kRef.current.value)+"ကျပ် "} {pRef.current?.value && NumChangeEngToMM(pRef.current.value)+"ပဲ "} {rRef.current?.value && NumChangeEngToMM(rRef.current.value)+"ရွေး"}</Typography>
+						<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(formData.price || 0, true)} ကျပ်တိတိ</Typography>
+						<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(parse(dateRef.current?.value, "dd/MM/yyyy", new Date()))}</Typography>
+						<Typography variant='subtitle1' color={grey[500]}>--{formData.description}--</Typography>
+						<CustomBadge>{acceptors.filter(i => i.id===formData.acceptor_id)[0]?.name}</CustomBadge>
+					</div>
+				</DialogContent>
+				<DialogActions>
+					<LoadingButton loading={isLoadingBtn} onClick={() => setIsOpenVerifyDialog(false)}>cancle</LoadingButton>
+					<LoadingButton variant='contained' loading={isLoadingBtn} onClick={handleSubmit}>သေချာသည်</LoadingButton>
+				</DialogActions>
+			</Dialog>
 		</>
 	)
 }

@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, ButtonGroup, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, LinearProgress, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, ButtonGroup, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, LinearProgress, Skeleton, Stack, TextField, Typography } from '@mui/material';
 import { amber, blue, cyan, green, grey, indigo, lightBlue, orange, pink, purple, red, teal } from '@mui/material/colors';
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -106,12 +106,18 @@ export default function Detail() {
 		setIsLoadingDeleteBtn(false);
 	}
 
-	const EditButton = () => {
+	const EditButton = (props) => {
+		const { onClick } = props;
+
 		return (
-			<IconButton color='primary'>
+			<IconButton color='primary' onClick={onClick}>
 				<EditIcon />
 			</IconButton>
 		)
+	}
+
+	const handleEditPawn = (pawnId) => {
+		navigate(`/editpawn/${pawnId}`)
 	}
 
 	useEffect(() => {
@@ -234,142 +240,158 @@ export default function Detail() {
 									<Chip label="မှတ်တမ်းများ" />
 								</Divider>
 							</Grid>
-							{histories.length &&
-								histories.map((history, index) => {
-									return (
-										<React.Fragment key={history.created_at}>
-											{/* ထား */}
-											{history.status === "pawn" ? (
-												<Grid item xs={12}>
-													<Stack>
-														<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>{history.name}</Typography>
-														<Typography variant='subtitle1'>{history.gold}</Typography>
-														<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
-														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>
-															{
-																dateLang==="mm" ?
-																GetMMDate(new Date(history.date)) :
-																`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
-															}
-														</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
-													</Stack>
-												</Grid>
-											) : null}
+							{!histories.length ? (
+									<>
+										<Grid item xs={12}>
+											<Skeleton width="20%" animation="wave" />
+											<Skeleton width="30%" animation="wave" />
+											<Skeleton width="20%" animation="wave" />
+											<Skeleton width="35%" animation="wave" />
+											<Skeleton width="55%" animation="wave" />
+										</Grid>
+									</>
+								):(
+									histories.map((history, index) => {
+										return (
+											<React.Fragment key={history.created_at}>
+												{/* ထား */}
+												{history.status === "pawn" ? (
+													<Grid item xs={12}>
+														<Stack>
+															<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem", display: "flex", justifyContent: "space-between" }}>
+																{history.name}
+																{
+																	index === histories.length-1 && <EditButton onClick={() => handleEditPawn(history.id)} />
+																}
+															</Typography>
+															<Typography variant='subtitle1'>{history.gold}</Typography>
+															<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
+															<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
+															<Typography variant='subtitle1' color={grey[500]}>
+																{
+																	dateLang==="mm" ?
+																	GetMMDate(new Date(history.date)) :
+																	`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
+																}
+															</Typography>
+															<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
+														</Stack>
+													</Grid>
+												) : null}
 
-											{/* ထပ်ယူ */}
-											{history.status === "htet_yu" ? (
-												<Grid item xs={12}>
-													<Stack>
-														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
-															{history.name}
-															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(ထပ်ယူ)</Typography>
-															{
-																index === histories.length-1 && <EditButton />
-															}
-														</Typography>
-														<Typography variant='subtitle1'>{history.gold}</Typography>
-														<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
-														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>
-															{
-																dateLang==="mm" ?
-																GetMMDate(new Date(history.date)) :
-																`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
-															}
-														</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
-													</Stack>
-												</Grid>
-											) : null}
+												{/* ထပ်ယူ */}
+												{history.status === "htet_yu" ? (
+													<Grid item xs={12}>
+														<Stack>
+															<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
+																{history.name}
+																<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(ထပ်ယူ)</Typography>
+																{
+																	index === histories.length-1 && <EditButton />
+																}
+															</Typography>
+															<Typography variant='subtitle1'>{history.gold}</Typography>
+															<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
+															<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
+															<Typography variant='subtitle1' color={grey[500]}>
+																{
+																	dateLang==="mm" ?
+																	GetMMDate(new Date(history.date)) :
+																	`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
+																}
+															</Typography>
+															<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
+														</Stack>
+													</Grid>
+												) : null}
 
-											{/* အတိုးဆပ် */}
-											{history.status === "pay_interest" ? (
-												<Grid item xs={12}>
-													<Stack>
-														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
-															{history.name}
-															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(အတိုးဆပ်)</Typography>
-															{
-																index === histories.length-1 && <EditButton />
-															}
-														</Typography>
-														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (ဆပ်)</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>
-															{
-																dateLang==="mm" ?
-																GetMMDate(new Date(history.pay_date)) :
-																`${new Date(history.pay_date).getDate()}-${new Date(history.pay_date).getMonth()+1}-${new Date(history.pay_date).getFullYear()}`
-															} (ဆပ်)
-														</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>
-															{
-																dateLang==="mm" ?
-																GetMMDate(new Date(history.change_date)) :
-																`${new Date(history.change_date).getDate()}-${new Date(history.change_date).getMonth()+1}-${new Date(history.change_date).getFullYear()}`
-															} (ပြောင်း)
-														</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
-													</Stack>
-												</Grid>
-											) : null}
+												{/* အတိုးဆပ် */}
+												{history.status === "pay_interest" ? (
+													<Grid item xs={12}>
+														<Stack>
+															<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
+																{history.name}
+																<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(အတိုးဆပ်)</Typography>
+																{
+																	index === histories.length-1 && <EditButton />
+																}
+															</Typography>
+															<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (ဆပ်)</Typography>
+															<Typography variant='subtitle1' color={grey[500]}>
+																{
+																	dateLang==="mm" ?
+																	GetMMDate(new Date(history.pay_date)) :
+																	`${new Date(history.pay_date).getDate()}-${new Date(history.pay_date).getMonth()+1}-${new Date(history.pay_date).getFullYear()}`
+																} (ဆပ်)
+															</Typography>
+															<Typography variant='subtitle1' color={grey[500]}>
+																{
+																	dateLang==="mm" ?
+																	GetMMDate(new Date(history.change_date)) :
+																	`${new Date(history.change_date).getDate()}-${new Date(history.change_date).getMonth()+1}-${new Date(history.change_date).getFullYear()}`
+																} (ပြောင်း)
+															</Typography>
+															<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
+														</Stack>
+													</Grid>
+												) : null}
 
-											{/* ခွဲရွေး */}
-											{history.status === "half_redeem" ? (
-												<Grid item xs={12}>
-													<Stack>
-														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
-															{history.name}
-															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(ခွဲရွေး)</Typography>
-															{
-																index === histories.length-1 && <EditButton />
-															}
-														</Typography>
-														<Typography variant='subtitle1'>{history.take_gold} (ရွေး)</Typography>
-														<Typography variant='subtitle1'>{history.left_gold} (ကျန်)</Typography>
-														<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
-														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (သွင်း)</Typography>
-														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>
-															{
-																dateLang==="mm" ?
-																GetMMDate(new Date(history.date)) :
-																`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
-															}
-														</Typography>
-														{/* <Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(history.change_date))} (ပြောင်း)</Typography> */}
-														<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
-													</Stack>
-												</Grid>
-											) : null}
+												{/* ခွဲရွေး */}
+												{history.status === "half_redeem" ? (
+													<Grid item xs={12}>
+														<Stack>
+															<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
+																{history.name}
+																<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(ခွဲရွေး)</Typography>
+																{
+																	index === histories.length-1 && <EditButton />
+																}
+															</Typography>
+															<Typography variant='subtitle1'>{history.take_gold} (ရွေး)</Typography>
+															<Typography variant='subtitle1'>{history.left_gold} (ကျန်)</Typography>
+															<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
+															<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (သွင်း)</Typography>
+															<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>
+															<Typography variant='subtitle1' color={grey[500]}>
+																{
+																	dateLang==="mm" ?
+																	GetMMDate(new Date(history.date)) :
+																	`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
+																}
+															</Typography>
+															{/* <Typography variant='subtitle1' color={grey[500]}>{GetMMDate(new Date(history.change_date))} (ပြောင်း)</Typography> */}
+															<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
+														</Stack>
+													</Grid>
+												) : null}
 
-											{/* ရွေး */}
-											{history.status === "redeem" ? (
-												<Grid item xs={12}>
-													<Stack>
-														<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
-															{history.name}
-															<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(ရွေး)</Typography>
-															{
-																index === histories.length-1 && <EditButton />
-															}
-														</Typography>
-														<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>
-															{
-																dateLang==="mm" ?
-																GetMMDate(new Date(history.date)) :
-																`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
-															}
-														</Typography>
-														<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
-													</Stack>
-												</Grid>
-											) : null}
-										</React.Fragment>
-									)
-								})
+												{/* ရွေး */}
+												{history.status === "redeem" ? (
+													<Grid item xs={12}>
+														<Stack>
+															<Typography variant='subtitle1' sx={{ display: "flex", alignItems: "center", fontWeight: "600", fontSize: "1.2rem" }}>
+																{history.name}
+																<Typography variant='body2' sx={{ fontWeight: "400", fontSize: "1rem", flexGrow: 1 }} color={red[500]}>(ရွေး)</Typography>
+																{
+																	index === histories.length-1 && <EditButton />
+																}
+															</Typography>
+															<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.price, true)} ကျပ်တိတိ</Typography>
+															<Typography variant='subtitle1' color={grey[500]}>
+																{
+																	dateLang==="mm" ?
+																	GetMMDate(new Date(history.date)) :
+																	`${new Date(history.date).getDate()}-${new Date(history.date).getMonth()+1}-${new Date(history.date).getFullYear()}`
+																}
+															</Typography>
+															<Typography variant='subtitle1' color={grey[500]}>--{history.description}--</Typography>
+														</Stack>
+													</Grid>
+												) : null}
+											</React.Fragment>
+										)
+									})
+								)
 							}
 						</Grid>
 

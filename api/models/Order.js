@@ -38,7 +38,7 @@ class Order{
 
 	static async getOrderById(id){
 		const query = `
-			SELECT orders.id, orders.code, orders.name, orders.phone, orders.gold, orders.weight, orders.redeem, orders.date, acceptors.name as acceptor, villages.name as village, order_albums.id as order_album_id, albums.id as album_id, albums.name as album_name
+			SELECT orders.id, orders.code, orders.name, orders.phone, orders.gold, orders.weight, orders.redeem, orders.date, acceptors.id as acceptor_id, acceptors.name as acceptor, villages.id as village_id, villages.name as village, order_albums.id as order_album_id, albums.id as album_id, albums.name as album_name
 			FROM orders
 			LEFT JOIN acceptors ON acceptors.id=orders.acceptor_id
 			LEFT JOIN villages ON villages.id=orders.village_id
