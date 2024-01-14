@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, LinearProgress, TextField, Typography } from '@mui/material'
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs'
@@ -29,6 +29,7 @@ export default function Add() {
 	const [MMdate, setMMDate] = useState(GetMMDate(new Date()));
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 	const [isFetchingAlbumDetail, setIsFetchingAlbumDetail] = useState(false);
+	const [isFetchingData, setIsFetchingData] = useState(true);
 	const [isOpenVerifyDialog, setIsOpenVerifyDialog] = useState(false);
 
 	const kRef = useRef();	//ကျပ်
@@ -143,25 +144,26 @@ export default function Add() {
 	}
 
 	useEffect(() => {
-		const fetchAcceptors = async () => {
-			const result = await getAllAcceptors();
-			if(!result.ok) return;
-			setAcceptors(result);
-		}
-		const fetchVillages = async () => {
-			const result = await getAllvillages();
-			if(!result.ok) return;
-			setVillages(result);
-		}
-		const fetchAlbums = async () => {
-			const result = await getAllAlbums();
-			if(!result.ok) return;
-			setAlbums(result);
+		const fetchData = async () => {
+			// fetch acceptors
+			const acceptorsResult = await getAllAcceptors();
+			if(!acceptorsResult.ok) return;
+			setAcceptors(acceptorsResult);
+
+			// fetch villages
+			const villagesResult = await getAllvillages();
+			if(!villagesResult.ok) return;
+			setVillages(villagesResult);
+
+			// fetch albums
+			const albumsResult = await getAllAlbums();
+			if(!albumsResult.ok) return;
+			setAlbums(albumsResult);
+
+			setIsFetchingData(false)
 		}
 
-		fetchAcceptors();
-		fetchVillages();
-		fetchAlbums();
+		fetchData();
 		setFormData(prev => ({...prev, acceptor_id: +localStorage.getItem("acceptor_id") || 1}))
 	}, [])
 
@@ -175,193 +177,201 @@ export default function Add() {
 				<span></span>
 			</Box>
 
-			<form onSubmit={(e) => {
-					e.preventDefault();
+			{
+				isFetchingData ? (
+					<>
+						<LinearProgress />
+					</>
+				):(
+					<form onSubmit={(e) => {
+							e.preventDefault();
 
-					handleVerify();
-				}}>
+							handleVerify();
+						}}>
 
-				<Grid container spacing={2} pb={4}>
-					<Grid item xs={12}>
-						<Autocomplete
-							options={albumOptions.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-							groupBy={(option) => option.firstLetter}
-							getOptionLabel={(option) => option.name}
-							fullWidth
-							size='small'
-							disabled={isFetchingAlbumDetail}
-							loading={isFetchingAlbumDetail}
-							// error={Boolean(error.village_id)}
-							renderInput={(params) => (
-								<TextField
-									{...params}
-									helperText={error.village_id ? "required" : ""}
-									label="Album"
-									InputProps={{
-										...params.InputProps,
-										endAdornment: (
-										<React.Fragment>
-											{isFetchingAlbumDetail ? <CircularProgress color="inherit" size={20} /> : null}
-											{params.InputProps.endAdornment}
-										</React.Fragment>
-										),
-									}}
-								/>
-							)}
-							name="album"
-							isOptionEqualToValue={(option, value) => option.id === value.id}
-							onChange={handleChangeAlbum}
-							renderGroup={(params) => (
-								<li key={params.key}>
-									<GroupHeader>{params.group}</GroupHeader>
-									<GroupItems>{params.children}</GroupItems>
-								</li>
-							)}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							label="ပေါင်သူ အမည်"
-							size="small"
-							name='name'
-							fullWidth
-							required
-							value={formData.name}
-							onChange={handleChangeFormData}
-							// error={Boolean(error.name)}
-							helperText={error.name ? "required" : ""}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<Autocomplete
-							options={villageOptions.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-							groupBy={(option) => option.firstLetter}
-							getOptionLabel={(option) => option.name}
-							fullWidth
-							value={formData.village}
-							size='small'
-							// error={Boolean(error.village_id)}
-							renderInput={(params) => <TextField {...params} helperText={error.village_id ? "required" : ""} label="နေရပ်" />}
-							name="village"
-							isOptionEqualToValue={(option, value) => option.id === value.id}
-							onChange={handleChangeVillage}
-							renderGroup={(params) => (
-								<li key={params.key}>
-									<GroupHeader>{params.group}</GroupHeader>
-									<GroupItems>{params.children}</GroupItems>
-								</li>
-							)}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							label="ဖုန်းနံပါတ်"
-							size="small"
-							type='number'
-							name='phone'
-							value={formData.phone}
-							fullWidth
-							onChange={handleChangeFormData}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							label="အပေါင် ပစ္စည်း"
-							required
-							size="small"
-							name='gold'
-							fullWidth
-							onChange={handleChangeFormData}
-							// error={Boolean(error.gold)}
-							helperText={error.gold ? "required" : ""}
-						/>
-					</Grid>
-					<Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between" }}>
-						<TextField
-							label="ကျပ်"
-							size="small"
-							type='number'
-							sx={{ maxWidth: "30%" }}
-							inputRef={kRef}
-							// error={Boolean(error.weight)}
-							helperText={error.weight ? "required" : ""}
-						/>
-						<TextField
-							label="ပဲ"
-							size="small"
-							type='number'
-							sx={{ maxWidth: "30%" }}
-							inputRef={pRef}
-						/>
-						<TextField
-							label="ရွေး"
-							size="small"
-							type='number'
-							sx={{ maxWidth: "30%" }}
-							inputRef={rRef}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							label="ယူငွေ"
-							required
-							type='number'
-							size="small"
-							name='price'
-							fullWidth
-							onChange={handleChangeFormData}
-							// error={Boolean(error.price)}
-							helperText={error.price ? "required" : ""}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<LocalizationProvider dateAdapter={AdapterDayjs}>
-							<MobileDatePicker
-								label={"နေ့ရက်"}
-								defaultValue={dayjs(new Date())}
-								format={"DD/MM/YYYY"}
-								inputRef={dateRef}
-								onAccept={handelChangeDate}
-								slotProps={{
-									textField: {
-										helperText: MMdate,
-										size: 'small',
-										fullWidth: true,
-									}
-								}}
-							/>
-						</LocalizationProvider>
-					</Grid>
-					<Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between" }}>
-						{acceptors.map((a) => {
-							return (
-								<Button
-									key={a.id}
-									variant={formData.acceptor_id===a.id ? "contained": "outlined"}
+						<Grid container spacing={2} pb={4}>
+							<Grid item xs={12}>
+								<Autocomplete
+									options={albumOptions.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+									groupBy={(option) => option.firstLetter}
+									getOptionLabel={(option) => option.name}
+									fullWidth
 									size='small'
-									color={formData.acceptor_id===a.id ? "warning": "info"}
-									onClick={() => handleChangeAcceptor(a.id)}>
-									{a.short_name}
-								</Button>
-							)
-						})}
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							label="မှတ်ချက်"
-							multiline
-							rows={4}
-							fullWidth
-							name='description'
-							onChange={handleChangeFormData}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						{/* <LoadingButton loading={isLoadingBtn} variant='outlined' sx={{ mr:2 }} type='submit' onClick={() => setSaveType("save")}>save</LoadingButton> */}
-						<LoadingButton loading={isLoadingBtn} variant='contained' type='submit'>save & print</LoadingButton>
-					</Grid>
-				</Grid>
-			</form>
+									disabled={isFetchingAlbumDetail}
+									loading={isFetchingAlbumDetail}
+									// error={Boolean(error.village_id)}
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											helperText={error.village_id ? "required" : ""}
+											label="Album"
+											InputProps={{
+												...params.InputProps,
+												endAdornment: (
+												<React.Fragment>
+													{isFetchingAlbumDetail ? <CircularProgress color="inherit" size={20} /> : null}
+													{params.InputProps.endAdornment}
+												</React.Fragment>
+												),
+											}}
+										/>
+									)}
+									name="album"
+									isOptionEqualToValue={(option, value) => option.id === value.id}
+									onChange={handleChangeAlbum}
+									renderGroup={(params) => (
+										<li key={params.key}>
+											<GroupHeader>{params.group}</GroupHeader>
+											<GroupItems>{params.children}</GroupItems>
+										</li>
+									)}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									label="ပေါင်သူ အမည်"
+									size="small"
+									name='name'
+									fullWidth
+									required
+									value={formData.name}
+									onChange={handleChangeFormData}
+									// error={Boolean(error.name)}
+									helperText={error.name ? "required" : ""}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<Autocomplete
+									options={villageOptions.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+									groupBy={(option) => option.firstLetter}
+									getOptionLabel={(option) => option.name}
+									fullWidth
+									value={formData.village}
+									size='small'
+									// error={Boolean(error.village_id)}
+									renderInput={(params) => <TextField {...params} helperText={error.village_id ? "required" : ""} label="နေရပ်" />}
+									name="village"
+									isOptionEqualToValue={(option, value) => option.id === value.id}
+									onChange={handleChangeVillage}
+									renderGroup={(params) => (
+										<li key={params.key}>
+											<GroupHeader>{params.group}</GroupHeader>
+											<GroupItems>{params.children}</GroupItems>
+										</li>
+									)}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									label="ဖုန်းနံပါတ်"
+									size="small"
+									type='number'
+									name='phone'
+									value={formData.phone}
+									fullWidth
+									onChange={handleChangeFormData}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									label="အပေါင် ပစ္စည်း"
+									required
+									size="small"
+									name='gold'
+									fullWidth
+									onChange={handleChangeFormData}
+									// error={Boolean(error.gold)}
+									helperText={error.gold ? "required" : ""}
+								/>
+							</Grid>
+							<Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between" }}>
+								<TextField
+									label="ကျပ်"
+									size="small"
+									type='number'
+									sx={{ maxWidth: "30%" }}
+									inputRef={kRef}
+									// error={Boolean(error.weight)}
+									helperText={error.weight ? "required" : ""}
+								/>
+								<TextField
+									label="ပဲ"
+									size="small"
+									type='number'
+									sx={{ maxWidth: "30%" }}
+									inputRef={pRef}
+								/>
+								<TextField
+									label="ရွေး"
+									size="small"
+									type='number'
+									sx={{ maxWidth: "30%" }}
+									inputRef={rRef}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									label="ယူငွေ"
+									required
+									type='number'
+									size="small"
+									name='price'
+									fullWidth
+									onChange={handleChangeFormData}
+									// error={Boolean(error.price)}
+									helperText={error.price ? "required" : ""}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								<LocalizationProvider dateAdapter={AdapterDayjs}>
+									<MobileDatePicker
+										label={"နေ့ရက်"}
+										defaultValue={dayjs(new Date())}
+										format={"DD/MM/YYYY"}
+										inputRef={dateRef}
+										onAccept={handelChangeDate}
+										slotProps={{
+											textField: {
+												helperText: MMdate,
+												size: 'small',
+												fullWidth: true,
+											}
+										}}
+									/>
+								</LocalizationProvider>
+							</Grid>
+							<Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between" }}>
+								{acceptors.map((a) => {
+									return (
+										<Button
+											key={a.id}
+											variant={formData.acceptor_id===a.id ? "contained": "outlined"}
+											size='small'
+											color={formData.acceptor_id===a.id ? "warning": "info"}
+											onClick={() => handleChangeAcceptor(a.id)}>
+											{a.short_name}
+										</Button>
+									)
+								})}
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									label="မှတ်ချက်"
+									multiline
+									rows={4}
+									fullWidth
+									name='description'
+									onChange={handleChangeFormData}
+								/>
+							</Grid>
+							<Grid item xs={12}>
+								{/* <LoadingButton loading={isLoadingBtn} variant='outlined' sx={{ mr:2 }} type='submit' onClick={() => setSaveType("save")}>save</LoadingButton> */}
+								<LoadingButton loading={isLoadingBtn} variant='contained' type='submit'>save & print</LoadingButton>
+							</Grid>
+						</Grid>
+					</form>
+				)
+			}
 
 			{/* verify dialog */}
 			<Dialog open={isOpenVerifyDialog} maxWidth="xs" fullWidth onClose={() => setIsOpenVerifyDialog(false)}>
