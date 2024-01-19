@@ -347,8 +347,8 @@ export default function Detail() {
 																	index === histories.length-1 && <EditButton />
 																}
 															</Typography>
-															<Typography variant='subtitle1'>{history.take_gold} (ရွေး)</Typography>
-															<Typography variant='subtitle1'>{history.left_gold} (ကျန်)</Typography>
+															<Typography variant='subtitle1'>{history.take_gold && `${history.take_gold} (ရွေး)`}</Typography>
+															<Typography variant='subtitle1'>{history.left_gold && `${history.left_gold} (ကျန်)`}</Typography>
 															<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(history.weight)}</Typography>
 															<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.pay_price, true)} ကျပ်တိတိ (သွင်း)</Typography>
 															<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(history.left_price, true)} ကျပ်တိတိ (ကျန်)</Typography>

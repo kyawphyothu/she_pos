@@ -71,7 +71,15 @@ export default function Redeem() {
 			data.take_gold = formData.take_gold;
 			data.left_gold = formData.left_gold;
 			data.weight = +rRef.current.value + (pRef.current.value*8) + (kRef.current.value*128);
-			if(!data.weight){
+			if(!data.take_gold && (data.left_gold || data.weight)){
+				snackNoti({type: "warning", msg: "ရွေးယူသည့်ပစ္စည်းဖြည့်ပါ"})
+				return;
+			}
+			if( !data.left_gold && (data.take_gold || data.weight)){
+				snackNoti({type: "warning", msg: "ကျန်သည့်ပစ္စည်းဖြည့်ပါ"})
+				return;
+			}
+			if((data.take_gold || data.left_gold) && !data.weight){
 				snackNoti({type: "warning", msg: "အလေးချိန် ဖြည့်သွင်းပါ"})
 				return;
 			}
@@ -197,7 +205,6 @@ export default function Redeem() {
 													size='small'
 													name='take_gold'
 													fullWidth
-													required
 													onChange={handleChangeFormData}
 												/>
 											</Grid>
@@ -207,7 +214,6 @@ export default function Redeem() {
 													size='small'
 													name='left_gold'
 													fullWidth
-													required
 													onChange={handleChangeFormData}
 												/>
 											</Grid>
