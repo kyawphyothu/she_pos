@@ -89,7 +89,7 @@ export default function Redeem() {
 			const result = await createHalfRedeem(data);
 			if(result.ok){
 				snackNoti({type: "success", msg: result.msg});
-				navigate(`/detail/${id}`);
+				navigate(-1);
 			}else{
 				snackNoti({type: "error", msg: result.err})
 			}
