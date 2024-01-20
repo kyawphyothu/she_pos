@@ -9,7 +9,7 @@ class Order{
 		if (isCountQuery) {
 			query = `SELECT count(orders.id) as total`;
 		} else {
-			query = `SELECT orders.id, orders.name, orders.phone, orders.gold, orders.weight, orders.date, orders.redeem, pawns.price, acceptors.name as acceptor, villages.name as village`;
+			query = `SELECT orders.id, orders.name, orders.phone, pawns.gold, pawns.weight, pawns.date, orders.redeem, pawns.price, acceptors.name as acceptor, villages.name as village`;
 		}
 
 		query += ` FROM orders

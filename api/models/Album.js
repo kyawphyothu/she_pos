@@ -18,7 +18,7 @@ class Album{
 
 	static async getOrdersByAlbumId(id){
 		const query = `
-			SELECT orders.id, orders.name, orders.phone, orders.gold, orders.weight, orders.date, orders.redeem, pawns.price, acceptors.name as acceptor, villages.name as village
+			SELECT orders.id, orders.name, orders.phone, pawns.gold, pawns.weight, pawns.date, orders.redeem, pawns.price, acceptors.name as acceptor, villages.name as village
 			FROM orders
 			LEFT JOIN order_albums ON order_albums.order_id=orders.id
 			LEFT JOIN albums ON albums.id=order_albums.album_id

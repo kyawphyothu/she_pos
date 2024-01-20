@@ -17,6 +17,7 @@ import { LoadingButton } from '@mui/lab';
 import { AppContext } from '../AppContextProvider';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CalculateOrderByHistory from '../helper/CalculateOrderByHistory';
 
 export default function Detail() {
 	const { id } = useParams();
@@ -121,27 +122,43 @@ export default function Detail() {
 	}
 
 	useEffect(() => {
-		const fetchOrder = async () => {
-			const result = await getOrderById(id);
-			if(result.ok){
-				setOrder(result)
+		const fetchData = async () => {
+			const [orderResult, historyResult, albumResult] = await Promise.all([
+				getOrderById(id),
+				getHistoryByOrderId(id),
+				getAllAlbums()
+			]);
+
+			if (orderResult.ok && historyResult.ok) {
+				setHistories(historyResult);
+
+				const orderData = {
+					...orderResult
+				};
+				const orderByHistory = CalculateOrderByHistory(historyResult);
+				orderData.gold=orderByHistory.gold;
+				orderData.weight=orderByHistory.weight;
+				orderData.price=orderByHistory.price;
+				orderData.date=orderByHistory.date;
+				orderData.htet_yu=orderByHistory.htet_yu;
+				if (orderByHistory.htet_yu.length) {
+					orderByHistory.htet_yu.map(i => {
+						i.gold ? orderData.gold+=` ${i.gold}`: "";
+						i.weight ? orderData.weight+=i.weight: "";
+					})
+				}
+
+				setOrder(orderData);
 			}
-			setIsFetching(false)
-		}
-		const fetchHIstory = async () => {
-			const result = await getHistoryByOrderId(id);
-			if(result.ok){
-				setHistories(result)
+
+			if (albumResult.ok) {
+				setAlbums(albumResult);
 			}
-		}
-		const fetchAlbum = async () => {
-			const result = await getAllAlbums();
-			if(result.ok) setAlbums(result);
+
+			setIsFetching(false);
 		}
 
-		fetchOrder();
-		fetchHIstory();
-		fetchAlbum();
+		fetchData();
 		setQ(localStorage.getItem("q") || "");
 	}, [])
 
@@ -188,6 +205,14 @@ export default function Detail() {
 								<Typography variant='subtitle1'>{order.phone}</Typography>
 								<Typography variant='subtitle1'>{order.gold}</Typography>
 								<Typography variant='subtitle1' color={orange[500]}>{CalculateWeight(order.weight)}</Typography>
+								<Typography variant='subtitle1' color={green[500]}>
+									{NumChangeEngToMM(order.price, true)}
+									{
+										order.htet_yu.length ? order.htet_yu.map(i => {
+											return ` + ${NumChangeEngToMM(i.price, true)}`
+										}) : ""
+									}
+								</Typography>
 								<Typography variant='subtitle1' color={grey[500]}>
 									{
 										dateLang==="mm" ?
@@ -196,6 +221,17 @@ export default function Detail() {
 									}
 									<IconButton color='warning' onClick={toggleDateLang}><ChangeCircleIcon /></IconButton>
 								</Typography>
+								{
+									order.htet_yu.length ? order.htet_yu.map(i => {
+										return <Typography variant='subtitle1' color={grey[500]} key={i.date}>
+												{
+													dateLang==="mm" ?
+													GetMMDate(new Date(i.date)) :
+													`${new Date(i.date).getDate()}-${new Date(i.date).getMonth()+1}-${new Date(i.date).getFullYear()}`
+												}
+											</Typography>
+									}) : ''
+								}
 								<span style={{ marginBottom: "8px" }}>
 									{
 										order.album_id ? (
