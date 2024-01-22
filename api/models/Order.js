@@ -24,7 +24,7 @@ class Order{
 			params.push(villageId);
 		}
 
-		query += ` ORDER BY orders.date desc, orders.created_at desc`;
+		query += ` ORDER BY pawns.date desc, orders.created_at desc`;
 
 		if (!isCountQuery) {
 			query += ` LIMIT ?,?`;
