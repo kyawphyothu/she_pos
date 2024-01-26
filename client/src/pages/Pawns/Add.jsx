@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, LinearProgress, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, IconButton, LinearProgress, TextField, Typography } from '@mui/material'
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs'
@@ -31,6 +31,7 @@ export default function Add() {
 	const [isFetchingAlbumDetail, setIsFetchingAlbumDetail] = useState(false);
 	const [isFetchingData, setIsFetchingData] = useState(true);
 	const [isOpenVerifyDialog, setIsOpenVerifyDialog] = useState(false);
+	const [isCreateAlbumCheck, setIsCreateAlbumCheck] = useState(false);
 
 	const kRef = useRef();	//ကျပ်
 	const pRef = useRef();	//ပဲ
@@ -102,7 +103,11 @@ export default function Add() {
 
 	const handleSubmit = async () => {
 		const data = {...formData};
-		data.album_id = data.album?.id;
+		if(isCreateAlbumCheck){
+			data.create_album = 1;
+		}else{
+			data.album_id = data.album?.id;
+		}
 		data.village_id = data.village.id;
 		delete data.album;
 		delete data.village;
@@ -191,42 +196,56 @@ export default function Add() {
 
 						<Grid container spacing={2} pb={4}>
 							<Grid item xs={12}>
-								<Autocomplete
-									options={albumOptions.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-									groupBy={(option) => option.firstLetter}
-									getOptionLabel={(option) => option.name}
-									fullWidth
-									size='small'
-									disabled={isFetchingAlbumDetail}
-									loading={isFetchingAlbumDetail}
-									// error={Boolean(error.village_id)}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											helperText={error.village_id ? "required" : ""}
-											label="Album"
-											InputProps={{
-												...params.InputProps,
-												endAdornment: (
-												<React.Fragment>
-													{isFetchingAlbumDetail ? <CircularProgress color="inherit" size={20} /> : null}
-													{params.InputProps.endAdornment}
-												</React.Fragment>
-												),
-											}}
-										/>
-									)}
-									name="album"
-									isOptionEqualToValue={(option, value) => option.id === value.id}
-									onChange={handleChangeAlbum}
-									renderGroup={(params) => (
-										<li key={params.key}>
-											<GroupHeader>{params.group}</GroupHeader>
-											<GroupItems>{params.children}</GroupItems>
-										</li>
-									)}
+								<FormControlLabel
+									control={
+										<Checkbox checked={isCreateAlbumCheck} onChange={() => setIsCreateAlbumCheck(!isCreateAlbumCheck)} />
+									}
+									label="Album အသစ်ထည့်မည်"
 								/>
 							</Grid>
+							{
+								isCreateAlbumCheck ? (
+									<></>
+								) : (
+									<Grid item xs={12}>
+										<Autocomplete
+											options={albumOptions.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+											groupBy={(option) => option.firstLetter}
+											getOptionLabel={(option) => option.name}
+											fullWidth
+											size='small'
+											disabled={isFetchingAlbumDetail}
+											loading={isFetchingAlbumDetail}
+											// error={Boolean(error.village_id)}
+											renderInput={(params) => (
+												<TextField
+													{...params}
+													helperText={error.village_id ? "required" : ""}
+													label="Album"
+													InputProps={{
+														...params.InputProps,
+														endAdornment: (
+														<React.Fragment>
+															{isFetchingAlbumDetail ? <CircularProgress color="inherit" size={20} /> : null}
+															{params.InputProps.endAdornment}
+														</React.Fragment>
+														),
+													}}
+												/>
+											)}
+											name="album"
+											isOptionEqualToValue={(option, value) => option.id === value.id}
+											onChange={handleChangeAlbum}
+											renderGroup={(params) => (
+												<li key={params.key}>
+													<GroupHeader>{params.group}</GroupHeader>
+													<GroupItems>{params.children}</GroupItems>
+												</li>
+											)}
+										/>
+									</Grid>
+								)
+							}
 							<Grid item xs={12}>
 								<TextField
 									label="ပေါင်သူ အမည်"

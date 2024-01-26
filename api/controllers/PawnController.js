@@ -1,6 +1,8 @@
 const Pawn = require('../models/Pawn');
 const Order = require('../models/Order');
 const OrderAlbum = require('../models/OrderAlbum');
+const Album = require('../models/Album');
+const Village = require('../models/Village');
 
 exports.show = async (req, res) => {
 	const id = req.params.id;
@@ -65,15 +67,31 @@ exports.create = async (req, res) => {
 		const resultPawn = await Pawn.create(PawnCreateData);
 		if(!resultPawn.insertId) return res.status(400).json({err: "error in insert into pawns"});
 
-		if(!data.album_id) return res.status(200).json({msg: "ထည့်သွင်းပြီးပါပြီ", id: insertOrderId});
 
-		// insert into order_albums
-		const OrderAlbumCreateData = {
-			order_id: insertOrderId,
-			album_id: data.album_id
-		};
-		const resultOrderAlbum = await OrderAlbum.create(OrderAlbumCreateData);
-		if(!resultOrderAlbum.insertId) return res.status(400).json({err: "error in insert into order albums"});
+		if(data.create_album || data.album_id){
+			if (data.create_album) {
+				// create album
+				const village = await Village.search(data.village_id);
+				const resultAlbum = await Album.create(`${data.name} (${village.name})`);
+				if(!resultAlbum.insertId) return res.status(500).json({err: "error in insert into Albums"});
+
+				// insert into order_albums
+				const OrderAlbumCreateData = {
+					order_id: insertOrderId,
+					album_id: resultAlbum.insertId
+				};
+				const resultOrderAlbum = await OrderAlbum.create(OrderAlbumCreateData);
+				if(!resultOrderAlbum.insertId) return res.status(400).json({err: "error in insert into order albums"});
+			} else {
+				// insert into order_albums
+				const OrderAlbumCreateData = {
+					order_id: insertOrderId,
+					album_id: data.album_id
+				};
+				const resultOrderAlbum = await OrderAlbum.create(OrderAlbumCreateData);
+				if(!resultOrderAlbum.insertId) return res.status(400).json({err: "error in insert into order albums"});
+			}
+		}
 
 		return res.status(200).json({msg: "ထည့်သွင်းပြီးပါပြီ", id: insertOrderId});
 	} catch (e) {

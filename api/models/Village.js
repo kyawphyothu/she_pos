@@ -6,6 +6,11 @@ class Village{
 		return results;
 	}
 
+	static async search(id) {
+		const [results, fields] = await db.query('SELECT * FROM villages WHERE id=?', id);
+		return results[0];
+	}
+
 	static async create(name) {
 		const [results, fileds] = await db.query(`INSERT INTO villages (name) VALUES (?)`, name);
 		return results;
