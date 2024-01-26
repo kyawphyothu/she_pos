@@ -1,4 +1,4 @@
-import { Box, Checkbox, FormControlLabel, Grid, IconButton, LinearProgress, Stack, TextField, Typography } from '@mui/material'
+import { Box, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, LinearProgress, Stack, TextField, Typography } from '@mui/material'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import CustomBadge from '../components/CustomBudge';
@@ -12,6 +12,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { format, parse } from 'date-fns';
 import { AppContext } from '../AppContextProvider';
 import GetMMDate from '../helper/GetMMDate';
+import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
+import { green, grey } from '@mui/material/colors';
+import NumChangeEngToMM from '../helper/NumChangeEngToMM';
+import CalculateWeight from '../helper/CalculateWeight';
 
 export default function Redeem() {
 	const { snackNoti } = useContext(AppContext);
@@ -23,6 +27,7 @@ export default function Redeem() {
 	const [formData, setFormData] = useState({order_id: "", name: "", price: "", pay_price: "", left_Price: "", take_gold: "", left_gold: "", weight: "", date: "", description: ""});
 	const [MMDate, setMMDate] = useState(GetMMDate(new Date()));
 	const [isLoadingBtn, setIsLoadingBtn] = useState(false);
+	const [isOpenVerifyDialog, setisOpenVerifyDialog] = useState(false)
 
 	const kRef = useRef(0);	//ကျပ်
 	const pRef = useRef(0);	//ပဲ
@@ -48,6 +53,10 @@ export default function Redeem() {
 
 	const handleChangeDate = (newVal) => {
 		setMMDate(GetMMDate(newVal));
+	}
+
+	const handleVerify = () => {
+		setisOpenVerifyDialog(true);
 	}
 
 	const handleSubmit = async () => {
@@ -76,11 +85,11 @@ export default function Redeem() {
 				return;
 			}
 			if( !data.left_gold && (data.take_gold || data.weight)){
-				snackNoti({type: "warning", msg: "ကျန်သည့်ပစ္စည်းဖြည့်ပါ"})
+				snackNoti({type: "warning", msg: "ကျန်ပစ္စည်းဖြည့်သွင်းပါ"})
 				return;
 			}
 			if((data.take_gold || data.left_gold) && !data.weight){
-				snackNoti({type: "warning", msg: "အလေးချိန် ဖြည့်သွင်းပါ"})
+				snackNoti({type: "warning", msg: "ကျန်ပစ္စည်း အလေးချိန် ဖြည့်သွင်းပါ"})
 				return;
 			}
 
@@ -144,8 +153,8 @@ export default function Redeem() {
 						<form onSubmit={(e) => {
 							e.preventDefault();
 
-							handleSubmit();
-						}}>
+							handleVerify();
+							}}>
 							<Grid container spacing={2}>
 								<Grid item xs={12}>
 									<Stack direction={"row"} flexWrap={"wrap"}>
@@ -290,6 +299,40 @@ export default function Redeem() {
 								</Grid>
 							</Grid>
 						</form>
+
+						{/* verify dialog */}
+						<Dialog open={isOpenVerifyDialog} maxWidth="xs" fullWidth onClose={() => setisOpenVerifyDialog(false)}>
+							<DialogTitle alignItems={"center"} display={"flex"}>
+								<Typography component={"p"} mr={1}>အတည်ပြုပါ</Typography>
+								<TaskAltRoundedIcon color="success" />
+							</DialogTitle>
+							<DialogContent>
+								<div>
+									<Typography variant='subtitle1' sx={{ fontWeight: "600", fontSize: "1.2rem" }}>{formData.name} {isHalfRedeem ? "(ခွဲရွေး)" : "(ရွေး)"}</Typography>
+									{
+										isHalfRedeem ? (
+											<>
+												<Typography variant='subtitle1'>{formData.take_gold} {formData.take_gold ? "(ရွေး)": ""}</Typography>
+												<Typography variant='subtitle1'>{formData.left_gold} {formData.left_gold ? "(ကျန်)": ""}</Typography>
+												<Typography variant='subtitle1'>{kRef.current?.value && NumChangeEngToMM(kRef.current.value)+"ကျပ် "} {pRef.current?.value && NumChangeEngToMM(pRef.current.value)+"ပဲ "} {rRef.current?.value && NumChangeEngToMM(rRef.current.value)+"ရွေး"}</Typography>
+												<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(formData.pay_price || 0, true)} ကျပ်တိတိ (သွင်း)</Typography>
+												<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(formData.left_price || 0, true)} ကျပ်တိတိ (ကျန်)</Typography>
+											</>
+										) : (
+											<>
+												<Typography variant='subtitle1' color={green[500]}>{NumChangeEngToMM(formData.price || 0, true)} ကျပ်တိတိ</Typography>
+											</>
+										)
+									}
+									<Typography variant='subtitle1' color={grey[500]}>{GetMMDate(parse(dateRef.current?.value, "dd/MM/yyyy", new Date()))}</Typography>
+									<Typography variant='subtitle1' color={grey[500]}>--{formData.description}--</Typography>
+								</div>
+							</DialogContent>
+							<DialogActions>
+								<LoadingButton onClick={() => setisOpenVerifyDialog(false)}>cancle</LoadingButton>
+								<LoadingButton variant='contained' color='error' onClick={handleSubmit}>သေချာပါသည်</LoadingButton>
+							</DialogActions>
+						</Dialog>
 					</>
 				)
 			}
