@@ -27,6 +27,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
 			<Stack>
 				{/* <Typography variant='subtitle2'>{order.name}</Typography> */}
 				{/* <Typography variant='body2'>{FormatCode(order.code)}</Typography> */}
+				<Typography variant='body2'>{GetMMDate(new Date(histories[0].date))}</Typography>
 				<Typography variant='body2'>နေရပ်: {order.village}</Typography>
 				<Typography variant='body2'>ဖုန်း: {order.phone}</Typography>
 				{/* <Typography variant='body2'>{order.gold}</Typography>
