@@ -73,8 +73,8 @@ exports.getLoginUser = async (req, res) => {
 	const user = res.locals.user;
 
 	let result = await User.findById(user.id);
-	delete result.password;
 	if (result) {
+		delete result.password;
 		return res.status(200).json(result);
 	}
 

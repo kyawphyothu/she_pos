@@ -26,6 +26,7 @@ import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
 import { AppContext } from '../AppContextProvider';
 import FolderCopyOutlinedIcon from '@mui/icons-material/FolderCopyOutlined';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 const StyledFab = styled(Fab)({
 	position: 'absolute',
@@ -146,6 +147,17 @@ export default function Header() {
 												<Typography sx={{ display: "flex", justifyContent: "center" }}>
 													<LocationCityIcon sx={{ mr: 1 }} />
 													Villages
+												</Typography>
+											</MenuItem>,
+											<MenuItem
+												key={2}
+												onClick={() => {
+													handleCloseUserMenu();
+													navigate("/in_out_report");
+												}}>
+												<Typography sx={{ display: "flex", justifyContent: "center" }}>
+													<CalendarMonthIcon sx={{ mr: 1 }} />
+													Reports
 												</Typography>
 											</MenuItem>
 										]

@@ -11,6 +11,7 @@ import Redeem from "../pages/Redeem";
 import Search from "../pages/Search";
 import TableBorrow from "../pages/TableBorrow";
 import Village from "../pages/Village";
+import InOutReport from "../pages/InOutReport";
 
 const UserRoutes = [
 	// {
@@ -64,6 +65,10 @@ const UserRoutes = [
 	{
 		path: "/villages",
 		element: <Village />,
+	},
+	{
+		path: "/in_out_report",
+		element: <InOutReport />,
 	},
 ];
 

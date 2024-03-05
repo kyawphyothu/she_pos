@@ -222,3 +222,8 @@ export async function createOrderAlbum(data) {
 export async function deleteOrderAlbum(id) {
 	return makeApiRequest(`/order_album/${id}`, "DELETE");
 }
+
+//------------------------------------------reports------------------------------
+export async function getMonthlyReport(year) {
+	return makeApiRequest(`/report?year=${year}`, "GET");
+}
