@@ -17,6 +17,32 @@ import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 import { green, grey, orange } from '@mui/material/colors';
 import NumChangeEngToMM from '../../helper/NumChangeEngToMM';
 import CustomBadge from '../../components/CustomBudge';
+import { NumericFormat } from 'react-number-format';
+import num_to_mm_word from '../../helper/NumToMMWord';
+
+const NumericFormatCustom = React.forwardRef(
+	function NumericFormatCustom(props, ref) {
+	  const { onChange, ...other } = props;
+
+	  return (
+		<NumericFormat
+			{...other}
+			getInputRef={ref}
+			onValueChange={(values) => {
+				onChange({
+				target: {
+					name: props.name,
+					value: values.value,
+				},
+				});
+			}}
+			thousandSeparator
+			valueIsNumericString
+			//   prefix="$"
+		/>
+	  );
+	},
+);
 
 export default function Add() {
 	const { snackNoti } = useContext(AppContext);
@@ -332,13 +358,15 @@ export default function Add() {
 								<TextField
 									label="ယူငွေ"
 									required
-									type='number'
-									size="small"
-									name='price'
-									fullWidth
+									// value={formData.price}
 									onChange={handleChangeFormData}
-									// error={Boolean(error.price)}
-									helperText={error.price ? "required" : ""}
+									name="price"
+									InputProps={{
+										inputComponent: NumericFormatCustom,
+									}}
+									size='small'
+									fullWidth
+									helperText={num_to_mm_word(formData.price || 0)}
 								/>
 							</Grid>
 							<Grid item xs={12}>
