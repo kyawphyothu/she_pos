@@ -8,7 +8,7 @@ import Home from "../pages/Home";
 import HtetYu from "../pages/HtetYu";
 import PayInterest from "../pages/PayInterest";
 import Redeem from "../pages/Redeem";
-import Search from "../pages/Search";
+import Search from "../pages/search/Search";
 import TableBorrow from "../pages/TableBorrow";
 import Village from "../pages/Village";
 import InOutReport from "../pages/InOutReport";
