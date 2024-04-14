@@ -51,7 +51,8 @@ export default function FilterDialog(params) {
 							options={VillageOptions.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
 							groupBy={(option) => option.firstLetter}
 							getOptionLabel={(option) => option.name}
-							value={VillageOptions.filter(v => v.id === +searchParams.get("village"))[0]}
+							// value={VillageOptions.filter(v => v.id === +searchParams.get("village"))[0]}
+							value={filter.village}
 							onChange={handleChangeVillage}
 							isOptionEqualToValue={(option, value) => option.id === value.id}
 							fullWidth

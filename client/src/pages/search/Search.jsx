@@ -71,7 +71,7 @@ export default function Search() {
 
 	const handleApplyFilter = ({village, amountFrom, amountTo}) => {
 		setCurrentPage(1);
-		setSearchQueries({village: village?.id, amount_from: amountFrom, amount_to: amountTo});
+		setSearchQueries({village: village && village.id, amount_from: amountFrom, amount_to: amountTo});
 		handleCloseFilterDialog();
 	}
 
@@ -174,7 +174,7 @@ export default function Search() {
 					searchParams.get("village") && searchParams.get("village") !=="null" && (
 						<>
 							<Chip
-								label={`${villages.filter(v => v.id === +searchParams.get("village"))[0].name}`}
+								label={`${villages.filter(v => v.id === +searchParams.get("village"))[0]?.name}`}
 								onDelete={() => setSearchQueries({village: null})}
 							/>
 						</>
