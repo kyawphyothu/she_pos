@@ -1,7 +1,7 @@
 const db = require("../config/db")
 
 class Order{
-	static async getOrdersByNameCode(isCountQuery, searchString, villageId, page, limit){
+	static async getOrdersByNameCode(isCountQuery, searchString, villageId, amountFrom, amountTo, page, limit){
 		searchString = `%${searchString}%`;
 		const params = [searchString, searchString];
 		let query;
@@ -16,12 +16,16 @@ class Order{
 			LEFT JOIN pawns ON pawns.order_id=orders.id
 			LEFT JOIN acceptors ON acceptors.id=orders.acceptor_id
 			LEFT JOIN villages ON villages.id=orders.village_id
-			WHERE orders.name LIKE ? OR orders.code LIKE ?`
+			WHERE (orders.name LIKE ? OR orders.code LIKE ?)`
 		;
 
 		if(villageId !== "all"){
-			query += ` AND village_id in (?)`;
-			params.push(villageId);
+			query += ` AND orders.village_id in (?)`;
+			params.push(+villageId);
+		}
+		if(amountFrom && amountTo){
+			query += ` AND pawns.price BETWEEN ? AND ?`;
+			params.push(amountFrom, amountTo);
 		}
 
 		query += ` ORDER BY pawns.date desc, orders.created_at desc`;

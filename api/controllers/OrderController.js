@@ -2,13 +2,15 @@ const Order = require('../models/Order');
 
 exports.index = async (req, res) => {
 	const nameOrCode = req.query.q || "";
-	const village_id = req.query.village || "all";
+	const village_id = +req.query.village || "all";
+	const amount_from = + req.query.amount_from || null;
+	const amount_to = + req.query.amount_to || null;
 	const page = +req.query.page || 1;
 	const limit = +req.query.limit || 3;
 
 	try{
-		const countTotal = await Order.getOrdersByNameCode(true, nameOrCode, village_id);
-		const result = await Order.getOrdersByNameCode(false, nameOrCode, village_id, page, limit);
+		const countTotal = await Order.getOrdersByNameCode(true, nameOrCode, village_id, amount_from, amount_to);
+		const result = await Order.getOrdersByNameCode(false, nameOrCode, village_id, amount_from, amount_to, page, limit);
 
 		res.json({countTotal: countTotal[0].total, result});
 	}catch (e){

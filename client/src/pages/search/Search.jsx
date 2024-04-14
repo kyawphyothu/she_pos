@@ -1,18 +1,19 @@
-import { Autocomplete, Box, Button, Dialog, Divider, Grid, Pagination, Skeleton, Stack, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Button, Chip, CircularProgress, Dialog, Divider, Grid, Pagination, Skeleton, Stack, TextField, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { unstable_HistoryRouter, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
-import GetMMDate from '../helper/GetMMDate';
-import NumChangeEngToMM from '../helper/NumChangeEngToMM';
+import GetMMDate from '../../helper/GetMMDate';
+import NumChangeEngToMM from '../../helper/NumChangeEngToMM';
 import { green, grey, orange, teal } from '@mui/material/colors';
-import CustomBadge from '../components/CustomBudge';
-import CustomDialog from '../components/CustomDialog';
-import CustomDateInput from '../components/CustomDateInput';
-import { getAllvillages, getTodayOrder, searchOrder } from '../apiCalls';
+import CustomBadge from '../../components/CustomBudge';
+import CustomDialog from '../../components/CustomDialog';
+import CustomDateInput from '../../components/CustomDateInput';
+import { getAllvillages, getTodayOrder, searchOrder } from '../../apiCalls';
 import { LoadingButton } from '@mui/lab';
-import CalculateWeight from '../helper/CalculateWeight';
-import BarcodeScanner from '../components/BarcodeScanner';
+import CalculateWeight from '../../helper/CalculateWeight';
+import BarcodeScanner from '../../components/BarcodeScanner';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
+import FilterDialog from './FilterDialog';
 
 export default function Search() {
 	const navigate = useNavigate();
@@ -47,22 +48,6 @@ export default function Search() {
 		setOpenFilterDialog(false);
 	};
 
-
-	const filterDialogActionBtns = () => {
-		return (
-			<>
-				<Button variant='outlined' onClick={handleCloseFilterDialog}>cancle</Button>
-				<Button
-					variant='contained'
-					onClick={() => {
-						handleCloseFilterDialog()
-					}}>
-					apply
-				</Button>
-			</>
-		);
-	}
-
 	const VillageOptions = villages.map((option) => {
 		const firstLetter = option.name[0].toUpperCase();
 		return {
@@ -82,6 +67,12 @@ export default function Search() {
 			setOrders(res.result);
 			setTotalOrders(res.countTotal)
 		}
+	}
+
+	const handleApplyFilter = ({village, amountFrom, amountTo}) => {
+		setCurrentPage(1);
+		setSearchQueries({village: village?.id, amount_from: amountFrom, amount_to: amountTo});
+		handleCloseFilterDialog();
 	}
 
 	const handleClickDetail = (id) => {
@@ -132,6 +123,12 @@ export default function Search() {
 		setSearchQueries({page: currentPage, limit})
 	}, [currentPage])
 
+	if(!villages.length){
+		return <Box sx={{ display: "flex", justifyContent: "center" }}>
+			<CircularProgress />
+		</Box>
+	}
+
 	return (
 		<>
 			<Stack direction={"row"} spacing={1} sx={{ display: "flex", mb: 1 }}>
@@ -172,6 +169,35 @@ export default function Search() {
 				}}>
 				search
 			</LoadingButton>
+			<Stack direction="row" spacing={1} sx={{ mt: 2, overflow: 'scroll' }}>
+				{
+					searchParams.get("village") && searchParams.get("village") !=="null" && (
+						<>
+							<Chip
+								label={`${villages.filter(v => v.id === +searchParams.get("village"))[0].name}`}
+								onDelete={() => setSearchQueries({village: null})}
+							/>
+						</>
+					)
+				}
+				{
+					searchParams.get("amount_from") && searchParams.get("amount_from") !=="null" && searchParams.get("amount_to") && searchParams.get("amount_to") !=="null" && (
+						<>
+							<Chip
+								label={`${searchParams.get("amount_from")}-${searchParams.get("amount_to")}`}
+								onDelete={() => setSearchQueries({amount_from: null, amount_to: null})}
+							/>
+						</>
+					)
+				}
+				<Chip
+					label="+Filter"
+					variant="outlined"
+					onClick={() => {
+						setOpenFilterDialog(true);
+					}}
+				/>
+			</Stack>
 
 			{/* search result */}
 			<Grid container spacing={3} mt={2}>
@@ -242,49 +268,12 @@ export default function Search() {
 			</Grid>
 
 			{/* filter dialog */}
-			<CustomDialog
-				open={openFilterDialog}
-				handleClose={handleCloseFilterDialog}
-				title="စစ်ထုတ်မည်"
-				ActionButtons={filterDialogActionBtns}>
-				<Grid container spacing={2}>
-					<Grid item xs={12}>
-						<Autocomplete
-							id="grouped-demo"
-							options={VillageOptions.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-							groupBy={(option) => option.firstLetter}
-							getOptionLabel={(option) => option.name}
-							fullWidth
-							size='small'
-							renderInput={(params) => <TextField {...params} label="နေရပ်" />}
-						/>
-					</Grid>
-					<Grid item xs={6}>
-						<CustomDateInput
-							label="မှ"
-							defaultValue={new Date()}
-						/>
-					</Grid>
-					<Grid item xs={6}>
-						<CustomDateInput
-							label="ထိ"
-							defaultValue={new Date()}
-						/>
-					</Grid>
-					<Grid item xs={6}>
-						<TextField
-							label="ယူငွေ - မှ"
-							size='small'
-						/>
-					</Grid>
-					<Grid item xs={6}>
-						<TextField
-							label="ယူငွေ - ထိ"
-							size='small'
-						/>
-					</Grid>
-				</Grid>
-			</CustomDialog>
+			<FilterDialog
+				openFilterDialog={openFilterDialog}
+				handleCloseFilterDialog={handleCloseFilterDialog}
+				VillageOptions={VillageOptions}
+				handleApplyFilter={handleApplyFilter}
+			/>
 
 			{/* barcode camera dialog reader */}
 			<CustomDialog
